@@ -13,7 +13,7 @@ const config: Config = {
 				"gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
 			},
 			fontFamily: {
-				"open-sans": ["var(--font-fontFamily-open-sans)"],
+				nunito: ["var(--font-fontFamily-nunito)"],
 			},
 			colors: {
 				"custom-white": "#FFFFFF",
@@ -23,6 +23,9 @@ const config: Config = {
 				"custom-orange": "#FE5F1E",
 				"custom-yellow": "#FFDF8C",
 			},
+			screens: {
+				"xsm": "375px",
+			}
 		},
 	},
 	plugins: [],

@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const openSans = localFont({
-	src: "../../public/fonts/OpenSans-VariableFont_wdth,wght.ttf",
-	variable: "--font-family-open-sans",
+const nunito = localFont({
+	src: "../../public/fonts/Nunito-VariableFont_wght.ttf",
+	variable: "--font-family-nunito",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={openSans.className}>
+			<body className={nunito.className}>
 				<Header />
 				{children}
 			</body>

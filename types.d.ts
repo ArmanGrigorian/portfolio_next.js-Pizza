@@ -1,3 +1,4 @@
+type MouseTouchEvent<T extends HTMLElement> = MouseEvent<T> | TouchEvent<T>;
 type T_pizza = {
 	id: number;
 	origin_id: number;
