@@ -1,7 +1,6 @@
-
-export default function Option({ children }: { children: React.ReactNode }) {
+export default function Option({ children, value }: OptionProps) {
 	return (
-		<option className="text-custom-black text-base font-normal" value="title">
+		<option title={value} value={value} className="text-custom-black text-base font-normal">
 			{children}
 		</option>
 	);

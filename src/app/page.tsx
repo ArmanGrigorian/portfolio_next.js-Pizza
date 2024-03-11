@@ -1,13 +1,13 @@
-import { Categories, Heading, Menu, SectionMenu } from "@/components";
+import { Categories, MenuHeading, Menu, MenuSection } from "@/components";
 
 export default function HomePage() {
 	return (
 		<main className="max-w-7xl mx-auto bg-custom-white">
-			<SectionMenu>
+			<MenuSection>
 				<Categories />
-				<Heading />
+				<MenuHeading />
 				<Menu />
-			</SectionMenu>
+			</MenuSection>
 		</main>
 	);
 }

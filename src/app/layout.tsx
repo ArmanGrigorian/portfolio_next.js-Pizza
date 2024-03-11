@@ -1,4 +1,5 @@
 import { Header } from "@/components";
+import StoreProvider from "@/components/providers/StoreProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -21,8 +22,10 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={nunito.className}>
-				<Header />
-				{children}
+				<StoreProvider>
+					<Header />
+					{children}
+				</StoreProvider>
 			</body>
 		</html>
 	);
