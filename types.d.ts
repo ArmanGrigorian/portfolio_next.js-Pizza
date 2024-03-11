@@ -15,3 +15,19 @@ type T_pizza = {
 };
 
 type T_pizzas = T_pizza[];
+
+type CardInfoProps = {
+	image: string;
+	blur: string;
+	title: string;
+}
+
+type ParamsButtonProps = {
+	children: React.ReactNode;
+	styles: string;
+}
+
+type PriceTagProps = {
+	activePrice: number;	
+	prices: number[];
+}

@@ -2,23 +2,23 @@
 import { MouseEvent, TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 import { LOCAL_DATA } from "../../../DATA";
 
-
 export default function Categories() {
 	const categoriesData = useMemo(() => {
 		return ["All", ...Array.from(new Set(LOCAL_DATA.flatMap((pizza) => pizza.categories)))];
 	}, []);
 
 	const ulRef = useRef<HTMLUListElement>(null);
-	const [inDown, setInDown] = useState(false);
+	const [isMouseDown, setIsMouseDown] = useState(false);
 	const [startX, setStartX] = useState(0);
 	const [scrollLeft, setScrollLeft] = useState(0);
 	const [mouseMoveX, setMouseMoveX] = useState(0);
 
 	function handleMouseDown(e: MouseTouchEvent<HTMLUListElement>) {
 		if (!ulRef?.current) return;
-		setInDown(true);
+		setIsMouseDown(true);
 
 		if (e.type === "touchstart") {
+			e.preventDefault();
 			setStartX((e as TouchEvent<HTMLUListElement>).touches[0].pageX - ulRef.current.offsetLeft);
 		} else {
 			setStartX((e as MouseEvent<HTMLUListElement>).pageX - ulRef.current.offsetLeft);
@@ -28,17 +28,18 @@ export default function Categories() {
 	}
 
 	function handleMouseUp() {
-		setInDown(false);
+		setIsMouseDown(false);
 	}
 
 	function handleMouseLeave() {
-		setInDown(false);
+		setIsMouseDown(false);
 	}
 
 	function handleMouseMove(e: MouseTouchEvent<HTMLUListElement>) {
-		if (!ulRef?.current || !inDown) return;
+		if (!ulRef?.current || !isMouseDown) return;
 
 		if (e.type === "touchmove") {
+			e.preventDefault();
 			setMouseMoveX(
 				(e as TouchEvent<HTMLUListElement>).touches[0].pageX - ulRef.current.offsetLeft - startX,
 			);
@@ -65,7 +66,7 @@ export default function Categories() {
 			onTouchEnd={handleMouseUp}
 			onTouchCancel={handleMouseLeave}
 			onTouchMove={handleMouseMove}
-			className="categoriesMask px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-5">
+			className="categoriesMask px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-5 max-sm:px-5">
 			{categoriesData.map((category, idx) => (
 				<li
 					key={idx}

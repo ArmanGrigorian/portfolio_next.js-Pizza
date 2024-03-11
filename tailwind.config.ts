@@ -22,10 +22,11 @@ const config: Config = {
 				"custom-grey-dark": "#7B7B7B",
 				"custom-orange": "#FE5F1E",
 				"custom-yellow": "#FFDF8C",
+				"custom-green": "#2f9e44",
 			},
 			screens: {
-				"xsm": "375px",
-			}
+				xsm: "375px",
+			},
 		},
 	},
 	plugins: [],
