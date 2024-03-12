@@ -1,7 +1,7 @@
+import { updateCountsAndTotalPrice } from "@/utils/helpers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import type { RootState } from "../../store";
-
 import { LOCAL_DATA } from "../../../../DATA";
+import type { RootState } from "../../store";
 
 const initialState: productsState = {
 	menuProducts: LOCAL_DATA,
@@ -41,40 +41,23 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		updateMenuProduct: (state, { payload }: PayloadAction<T_pizza>) => {
-			const { origin_id, counts, prices, activePrice, totalPrice } = payload;
+		addToCart: (state, { payload }: PayloadAction<T_pizza>) => {
+			const { id, ...pizzaData } = payload;
+			const { origin_id, counts, sizes, prices, activePrice, totalPrice } = pizzaData;
 
 			state.menuProducts = state.menuProducts.map((product) => {
 				if (product.origin_id === origin_id) {
-					return {
-						...product,
-						counts: counts.map((count) => {
-							if (count === counts[activePrice]) {
-								return count + 1;
-							}
-							return count;
-						}),
-						totalPrice: totalPrice + prices[activePrice],
-					};
+					return updateCountsAndTotalPrice(product, activePrice, true);
 				}
 				return product;
 			});
-		},
-
-		addToCart: (state, { payload }: PayloadAction<T_pizza>) => {
-			const { id, origin_id, title, image, blur, counts, prices, sizes, activePrice, activeDough } =
-				payload;
 
 			const newCartProduct: T_cartPizza = {
-				id: id,
-				origin_id: origin_id,
-				title: title,
-				image: image,
-				blur: blur,
+				...pizzaData,
+				cart_id: crypto.randomUUID(),
 				count: counts[activePrice],
-				price: prices[activePrice],
+				price: Number(prices[activePrice].toFixed(2)),
 				activeSize: sizes[activePrice],
-				activeDough: activeDough,
 			};
 
 			const search = state.cartProducts.find((product) => {
@@ -97,7 +80,7 @@ export const productsSlice = createSlice({
 						return {
 							...product,
 							count: product.count + 1,
-							price: product.price + newCartProduct.price,
+							price: Number((product.price + newCartProduct.price).toFixed(2)),
 						};
 					}
 					return product;
@@ -107,18 +90,102 @@ export const productsSlice = createSlice({
 					...state.cartProducts,
 					{
 						...newCartProduct,
-						id: crypto.randomUUID(),
+						cart_id: crypto.randomUUID(),
 						count: 1,
 					},
 				];
 			}
+		},
+		incrementCount: (state, { payload }: PayloadAction<T_cartPizza>) => {
+			const { origin_id, cart_id, count, activePrice, price } = payload;
+			const basePrice = Number((price / count).toFixed(2));
 
-			console.log(state.cartProducts);
+			state.cartProducts = state.cartProducts.map((product) => {
+				if (product.cart_id === cart_id) {
+					return {
+						...product,
+						count: count + 1,
+						price: Number((price + basePrice).toFixed(2)),
+					};
+				}
+				return product;
+			});
+
+			state.menuProducts = state.menuProducts.map((product) => {
+				if (product.origin_id === origin_id) {
+					return updateCountsAndTotalPrice(product, activePrice, true);
+				}
+				return product;
+			});
+		},
+		decrementCount: (state, { payload }: PayloadAction<T_cartPizza>) => {
+			if (payload.count === 1) return;
+
+			const { origin_id, cart_id, count, activePrice, price } = payload;
+			const basePrice = Number((price / count).toFixed(2));
+
+			state.cartProducts = state.cartProducts.map((product) => {
+				if (product.cart_id === cart_id) {
+					return {
+						...product,
+						count: count - 1,
+						price: Number((price - basePrice).toFixed(2)),
+					};
+				}
+				return product;
+			});
+
+			state.menuProducts = state.menuProducts.map((product) => {
+				if (product.origin_id === origin_id) {
+					return updateCountsAndTotalPrice(product, activePrice, false);
+				}
+				return product;
+			});
+		},
+		removeItemFromCart: (state, { payload }: PayloadAction<T_cartPizza>) => {
+			const { origin_id, cart_id, activePrice, price } = payload;
+
+			state.cartProducts = state.cartProducts.filter((product) => product.cart_id !== cart_id);
+
+			state.menuProducts = state.menuProducts.map((product) => {
+				if (product.origin_id === origin_id) {
+					return {
+						...product,
+						counts: product.counts.map((val, idx) => {
+							if (idx === activePrice) {
+								return (val = 0);
+							}
+							return val;
+						}),
+						totalPrice: Number((product.totalPrice - price).toFixed(2)),
+					};
+				}
+				return product;
+			});
+		},
+		clearCart: (state) => {
+			state.cartProducts = [];
+
+			state.menuProducts = state.menuProducts.map((product) => {
+				return {
+					...product,
+					counts: product.counts.map((val) => (val = 0)),
+					totalPrice: 0,
+				};
+			});
 		},
 	},
 });
 
-export const { updateMenuProduct, addToCart, changeActivePrice, changeActiveDough } = productsSlice.actions;
+export const {
+	addToCart,
+	changeActivePrice,
+	changeActiveDough,
+	incrementCount,
+	decrementCount,
+	removeItemFromCart,
+	clearCart,
+} = productsSlice.actions;
 
 export const selectProducts = (state: RootState) => state.products;
 export const selectMenuProducts = (state: RootState) => state.products.menuProducts;

@@ -1,8 +1,9 @@
 type MouseTouchEvent<T extends HTMLElement> = MouseEvent<T> | TouchEvent<T>;
 
 type T_cartPizza = {
-	id: number | string;
+	id?: number;
 	origin_id: number;
+	cart_id: string;
 	title: string;
 	image: string;
 	blur: string;
@@ -10,6 +11,7 @@ type T_cartPizza = {
 	count: number;
 	activeSize: string;
 	activeDough: string;
+	activePrice: number;
 };
 
 type T_cartPizzas = T_cartPizza[];
@@ -77,3 +79,7 @@ interface productsState {
 	cartProducts: T_cartPizzas;
 }
 
+type T_total = {
+	count: number;
+	price: number;
+};

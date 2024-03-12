@@ -2,7 +2,7 @@
 
 import { selectCartProducts } from "@/lib/features/products/productsSlice";
 import { useAppSelector } from "@/lib/hook";
-import { getTotals } from "@/utils/getTotals";
+import { getTotals } from "@/utils/helpers";
 import Strong from "./Strong";
 
 export default function TotalsDiv() {

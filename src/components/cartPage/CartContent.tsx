@@ -15,7 +15,7 @@ export default function CartContent() {
         className="flex flex-col justify-start items-center gap-5 p-5 max-sm:p-3"
         >
 				{cartProducts.map((product) => (
-          <CartCard key={product.id} {...product} />
+          <CartCard key={product.cart_id} {...product} />
 				))}
 			</div>
 		);

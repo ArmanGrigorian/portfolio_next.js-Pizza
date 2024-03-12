@@ -7,7 +7,7 @@ import {
 	setIsMouseDown,
 } from "@/lib/features/slider/sliderSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { getEventPageX } from "@/utils/getEventPageX";
+import { getEventPageX } from "@/utils/helpers";
 import { useEffect, useMemo, useRef } from "react";
 
 export default function Categories() {

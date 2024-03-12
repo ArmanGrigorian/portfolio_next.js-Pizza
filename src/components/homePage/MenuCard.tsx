@@ -1,6 +1,6 @@
 "use client";
 
-import { addToCart, updateMenuProduct } from "@/lib/features/products/productsSlice";
+import { addToCart } from "@/lib/features/products/productsSlice";
 import { useAppDispatch } from "@/lib/hook";
 import { CardInfo, PizzaParams, PriceTag } from ".";
 
@@ -10,7 +10,6 @@ export default function MenuCard(pizza: T_pizza) {
 
 
 	function handleClick() {
-		dispatch(updateMenuProduct(pizza));
 		dispatch(addToCart(pizza));
 	}
 

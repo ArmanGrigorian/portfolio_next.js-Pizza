@@ -7,7 +7,7 @@ import cartPic from "../../../public/icons/cart.png";
 import arrowPic from "../../../public/icons/arrow.png";
 import { useAppSelector } from "@/lib/hook";
 import { selectCartProducts } from "@/lib/features/products/productsSlice";
-import { getTotals } from "@/utils/getTotals";
+import { getTotals } from "@/utils/helpers";
 
 export default function Button() {
 	const pathname = usePathname();
