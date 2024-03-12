@@ -6,6 +6,8 @@ import type { RootState } from "../../store";
 const initialState: productsState = {
 	menuProducts: LOCAL_DATA,
 	cartProducts: [],
+	activeCategory: "",
+	activeSort: "title",
 };
 
 export const productsSlice = createSlice({
@@ -14,6 +16,15 @@ export const productsSlice = createSlice({
 	initialState: initialState,
 
 	reducers: {
+		setMenuProducts: (state, { payload }: PayloadAction<T_pizzas>) => {
+			state.menuProducts = payload;
+		},
+		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
+			state.activeCategory = payload;
+		},
+		setActiveSort: (state, { payload }: PayloadAction<string>) => {
+			state.activeSort = payload;
+		},
 		changeActiveDough: (state, { payload }: PayloadAction<{ pizza: T_pizza; dough: string }>) => {
 			const { origin_id } = payload.pizza;
 
@@ -175,6 +186,9 @@ export const productsSlice = createSlice({
 });
 
 export const {
+	setMenuProducts,
+	setActiveCategory,
+	setActiveSort,
 	addToCart,
 	changeActivePrice,
 	changeActiveDough,
@@ -185,6 +199,7 @@ export const {
 } = productsSlice.actions;
 
 export const selectProducts = (state: RootState) => state.products;
+export const selectActiveSort = (state: RootState) => state.products.activeSort;
 export const selectMenuProducts = (state: RootState) => state.products.menuProducts;
 export const selectCartProducts = (state: RootState) => state.products.cartProducts;
 

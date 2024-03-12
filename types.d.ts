@@ -77,10 +77,11 @@ type activateSliderPayload = {
 interface productsState {
 	menuProducts: T_pizzas;
 	cartProducts: T_cartPizzas;
+	activeCategory: string;
+	activeSort: string;
 }
 
 type T_total = {
 	count: number;
 	price: number;
 };
-
