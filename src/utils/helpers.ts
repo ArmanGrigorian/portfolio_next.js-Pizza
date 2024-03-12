@@ -2,7 +2,7 @@ export function updateCountsAndTotalPrice(
 	product: T_pizza,
 	activePrice: number,
 	increment: boolean = true
-) {
+): T_pizza {
 	const { counts, totalPrice, prices } = product;
 
 	return {

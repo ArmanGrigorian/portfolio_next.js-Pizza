@@ -143,7 +143,7 @@ export const productsSlice = createSlice({
 			});
 		},
 		removeItemFromCart: (state, { payload }: PayloadAction<T_cartPizza>) => {
-			const { origin_id, cart_id, activePrice, price } = payload;
+			const { origin_id, count, cart_id, activePrice, price } = payload;
 
 			state.cartProducts = state.cartProducts.filter((product) => product.cart_id !== cart_id);
 
@@ -152,9 +152,7 @@ export const productsSlice = createSlice({
 					return {
 						...product,
 						counts: product.counts.map((val, idx) => {
-							if (idx === activePrice) {
-								return (val = 0);
-							}
+							if (idx === activePrice) return val - count;
 							return val;
 						}),
 						totalPrice: Number((product.totalPrice - price).toFixed(2)),
