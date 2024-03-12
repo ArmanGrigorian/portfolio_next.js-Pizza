@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 
 const initialState: sliderState = {
@@ -14,18 +14,18 @@ export const sliderSlice = createSlice({
 	initialState: initialState,
 
 	reducers: {
-		activateSlider: (state, { payload }) => {
+		activateSlider: (state, { payload }: PayloadAction<activateSliderPayload>) => {
 			const { startX, scrollLeft } = payload;
 			state.isMouseDown = true;
 			state.startX = startX;
 			state.scrollLeft = scrollLeft;
 			state.mouseMoveX = 0;
 		},
-		moveSlider: (state, { payload }) => {
+		moveSlider: (state, { payload }: PayloadAction<number>) => {
 			if (!state.isMouseDown) return;
 			state.mouseMoveX = payload;
 		},
-		setIsMouseDown: (state, { payload }) => {
+		setIsMouseDown: (state, { payload }: PayloadAction<boolean>) => {
 			state.isMouseDown = payload;
 		},
 	},

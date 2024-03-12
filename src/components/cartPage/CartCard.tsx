@@ -8,8 +8,8 @@ export default function CartCard(product: T_cartPizza) {
 			<div className="w-64 flex items-center gap-2 max-sm:flex-col max-sm:gap-1">
 				<Image
 					src={image}
-					width={112}
-					height={112}
+					width={96}
+					height={96}
 					blurDataURL={blur}
 					placeholder="blur"
 					alt={`pizza ${title} image`}
@@ -42,7 +42,7 @@ export default function CartCard(product: T_cartPizza) {
 				</button>
 			</div>
 
-			<strong className="text-custom-black text-base font-semibold">{price * count} &#36;</strong>
+			<strong className="text-custom-black text-base font-semibold">{price} &#36;</strong>
 
 			<button
 				type="button"

@@ -7,11 +7,12 @@
 		"image": "/images/cheeseburgerPizza.png",
 		"blur": "/blur/cheeseburgerPizzaBlurred.webp",
 		"prices": [3, 4, 5],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 2,
@@ -21,11 +22,12 @@
 		"image": "/images/cheesePizza.png",
 		"blur": "/blur/cheesePizzaBlurred.webp",
 		"prices": [2, 3, 4],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic", "thick"],
 		"sizes": ["20", "30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 4,
@@ -35,11 +37,12 @@
 		"image": "/images/asianPizza.png",
 		"blur": "/blur/asianPizzaBlurred.webp",
 		"prices": [3, 4],
-		"count": 0,
+		"counts": [0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 4,
@@ -49,11 +52,12 @@
 		"image": "/images/chickenPizza.png",
 		"blur": "/blur/chickenPizzaBlurred.webp",
 		"prices": [2, 3, 4],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic", "thick"],
 		"sizes": ["20", "30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 5,
@@ -63,11 +67,12 @@
 		"image": "/images/asianPizza.png",
 		"blur": "/blur/asianPizzaBlurred.webp",
 		"prices": [4, 5],
-		"count": 0,
+		"counts": [0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 6,
@@ -77,11 +82,12 @@
 		"image": "/images/jalapenoPizza.png",
 		"blur": "/blur/jalapenoPizzaBlurred.webp",
 		"prices": [2, 3, 4],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic", "thick"],
 		"sizes": ["20", "30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 7,
@@ -91,11 +97,12 @@
 		"image": "/images/primaPizza.png",
 		"blur": "/blur/primaPizzaBlurred.webp",
 		"prices": [2, 3, 4],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic", "thick"],
 		"sizes": ["20", "30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 8,
@@ -105,11 +112,12 @@
 		"image": "/images/cheeseburgerPizza.png",
 		"blur": "/blur/cheeseburgerPizzaBlurred.webp",
 		"prices": [3, 4, 5],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 9,
@@ -119,11 +127,12 @@
 		"image": "/images/baconPizza.png",
 		"blur": "/blur/baconPizzaBlurred.webp",
 		"prices": [4, 5],
-		"count": 0,
+		"counts": [0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 10,
@@ -133,11 +142,12 @@
 		"image": "/images/mondayPizza.png",
 		"blur": "/blur/mondayPizzaBlurred.webp",
 		"prices": [3, 4],
-		"count": 0,
+		"counts": [0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 11,
@@ -147,11 +157,12 @@
 		"image": "/images/napolisPizza.png",
 		"blur": "/blur/napolisPizzaBlurred.webp",
 		"prices": [2, 3, 4],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["20", "30", "40"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 12,
@@ -161,11 +172,12 @@
 		"image": "/images/oliveGardenPizza.png",
 		"blur": "/blur/oliveGardenPizzaBlurred.webp",
 		"prices": [3, 4, 5],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 13,
@@ -175,11 +187,12 @@
 		"image": "/images/unionPizza.png",
 		"blur": "/blur/unionPizzaBlurred.webp",
 		"prices": [2, 3],
-		"count": 0,
+		"counts": [0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["20", "30"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	},
 	{
 		"id": 14,
@@ -189,10 +202,11 @@
 		"image": "/images/viennesePizza.png",
 		"blur": "/blur/viennesePizzaBlurred.webp",
 		"prices": [3, 4, 5],
-		"count": 0,
+		"counts": [0, 0, 0],
 		"doughs": ["thin", "classic"],
 		"sizes": ["30", "40", "50"],
 		"activeDough": "thin",
-		"activePrice": 0
+		"activePrice": 0,
+		"totalPrice": 0
 	}
 ]

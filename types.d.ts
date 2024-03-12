@@ -1,7 +1,7 @@
 type MouseTouchEvent<T extends HTMLElement> = MouseEvent<T> | TouchEvent<T>;
 
 type T_cartPizza = {
-	id: number;
+	id: number | string;
 	origin_id: number;
 	title: string;
 	image: string;
@@ -22,11 +22,12 @@ type T_pizza = {
 	image: string;
 	blur: string;
 	prices: number[];
-	count: number;
+	counts: number[];
 	doughs: string[];
 	sizes: string[];
 	activeDough: string;
 	activePrice: number;
+	totalPrice: number;
 };
 
 type T_pizzas = T_pizza[];
@@ -40,6 +41,7 @@ type CardInfoProps = {
 type ParamsButtonProps = {
 	children: React.ReactNode;
 	title: string;
+	idx: number;
 	styles: string;
 };
 
@@ -55,7 +57,7 @@ type OptionProps = {
 
 type StrongProps = {
 	children: React.ReactNode;
-	value: number;
+	value: number | string;
 };
 
 interface sliderState {
@@ -64,12 +66,14 @@ interface sliderState {
 	scrollLeft: number;
 	mouseMoveX: number;
 }
+
+type activateSliderPayload = {
+	startX: number;
+	scrollLeft: number;
+};
+
 interface productsState {
 	menuProducts: T_pizzas;
 	cartProducts: T_cartPizzas;
 }
 
-interface local_data {
-	cart: T_cartPizzas;
-	menu: T_pizzas;
-}
