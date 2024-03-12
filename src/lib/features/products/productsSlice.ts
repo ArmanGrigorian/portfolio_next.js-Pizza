@@ -32,7 +32,6 @@ export const productsSlice = createSlice({
 
 			state.menuProducts = state.menuProducts.map((product) => {
 				if (product.origin_id === origin_id) {
-					console.log(product.activePrice, payload.idx);
 					return {
 						...product,
 						activePrice: payload.idx,
