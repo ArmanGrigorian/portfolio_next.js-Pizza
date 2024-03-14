@@ -1,10 +1,19 @@
-import { updateCountsAndTotalPrice } from "@/utils/helpers";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { LOCAL_DATA } from "../../../../DATA";
+import { productsAPI } from "@/api/api";
+import { generateIdFromParams, updateCountsAndTotalPrice } from "@/utils/helpers";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 
+export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", async () => {
+	try {
+		const { data } = await productsAPI.getCartProducts();
+		return data;
+	} catch (err) {
+		console.error(err);
+	}
+});
+
 const initialState: productsState = {
-	menuProducts: LOCAL_DATA,
+	menuProducts: [],
 	cartProducts: [],
 	activeCategory: "",
 	activeSort: "title",
@@ -19,13 +28,19 @@ export const productsSlice = createSlice({
 		setMenuProducts: (state, { payload }: PayloadAction<T_pizzas>) => {
 			state.menuProducts = payload;
 		},
+		setCartProducts: (state, { payload }: PayloadAction<T_cartPizzas | []>) => {
+			state.cartProducts = payload;
+		},
 		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
 			state.activeCategory = payload;
 		},
 		setActiveSort: (state, { payload }: PayloadAction<string>) => {
 			state.activeSort = payload;
 		},
-		changeActiveDough: (state, { payload }: PayloadAction<{ pizza: T_pizza; dough: string }>) => {
+		changeActiveDoughOptimistic: (
+			state,
+			{ payload }: PayloadAction<{ pizza: T_pizza; dough: string }>,
+		) => {
 			const { origin_id } = payload.pizza;
 
 			state.menuProducts = state.menuProducts.map((product) => {
@@ -38,7 +53,10 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		changeActivePrice: (state, { payload }: PayloadAction<{ pizza: T_pizza; idx: number }>) => {
+		changeActivePriceOptimistic: (
+			state,
+			{ payload }: PayloadAction<{ pizza: T_pizza; idx: number }>,
+		) => {
 			const { origin_id } = payload.pizza;
 
 			state.menuProducts = state.menuProducts.map((product) => {
@@ -51,9 +69,9 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		addToCart: (state, { payload }: PayloadAction<T_pizza>) => {
-			const { id, ...pizzaData } = payload;
-			const { origin_id, counts, sizes, prices, activePrice, totalPrice } = pizzaData;
+		addToCartOptimistic: (state, { payload }: PayloadAction<T_pizza>) => {
+			const { id, categories, counts, doughs, prices, sizes, totalPrice, ...pizzaData } = payload;
+			const { origin_id, activePrice } = pizzaData;
 
 			state.menuProducts = state.menuProducts.map((product) => {
 				if (product.origin_id === origin_id) {
@@ -64,21 +82,17 @@ export const productsSlice = createSlice({
 
 			const newCartProduct: T_cartPizza = {
 				...pizzaData,
-				cart_id: crypto.randomUUID(),
 				count: counts[activePrice],
 				price: Number(prices[activePrice].toFixed(2)),
 				activeSize: sizes[activePrice],
 			};
 
-			const search = state.cartProducts.find((product) => {
-				if (
+			const search = state.cartProducts.find(
+				(product) =>
 					product.title === newCartProduct.title &&
 					product.activeDough === newCartProduct.activeDough &&
-					product.activeSize === newCartProduct.activeSize
-				)
-					return true;
-				return false;
-			});
+					product.activeSize === newCartProduct.activeSize,
+			);
 
 			if (search) {
 				state.cartProducts = state.cartProducts.map((product) => {
@@ -100,13 +114,13 @@ export const productsSlice = createSlice({
 					...state.cartProducts,
 					{
 						...newCartProduct,
-						cart_id: crypto.randomUUID(),
+						cart_id: generateIdFromParams(newCartProduct),
 						count: 1,
 					},
 				];
 			}
 		},
-		incrementCount: (state, { payload }: PayloadAction<T_cartPizza>) => {
+		incrementCountOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
 			const { origin_id, cart_id, count, activePrice, price } = payload;
 			const basePrice = Number((price / count).toFixed(2));
 
@@ -128,9 +142,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		decrementCount: (state, { payload }: PayloadAction<T_cartPizza>) => {
-			if (payload.count === 1) return;
-
+		decrementCountOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
 			const { origin_id, cart_id, count, activePrice, price } = payload;
 			const basePrice = Number((price / count).toFixed(2));
 
@@ -152,10 +164,12 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		removeItemFromCart: (state, { payload }: PayloadAction<T_cartPizza>) => {
+		removeItemFromCartOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
 			const { origin_id, count, cart_id, activePrice, price } = payload;
 
 			state.cartProducts = state.cartProducts.filter((product) => product.cart_id !== cart_id);
+
+			localStorage.setItem("cartProducts", JSON.stringify(state.cartProducts));
 
 			state.menuProducts = state.menuProducts.map((product) => {
 				if (product.origin_id === origin_id) {
@@ -171,7 +185,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		clearCart: (state) => {
+		clearCartOptimistic: (state) => {
 			state.cartProducts = [];
 
 			state.menuProducts = state.menuProducts.map((product) => {
@@ -183,19 +197,28 @@ export const productsSlice = createSlice({
 			});
 		},
 	},
+	extraReducers: (builder) => {
+		builder.addCase(fetchCartProducts.fulfilled, (state, { payload }: PayloadAction<T_cartPizzas>) => {
+			state.cartProducts = payload;
+		});
+		builder.addCase(fetchCartProducts.rejected, (state) => {
+			state.cartProducts = [];
+		})
+	},
 });
 
 export const {
 	setMenuProducts,
+	setCartProducts,
 	setActiveCategory,
 	setActiveSort,
-	addToCart,
-	changeActivePrice,
-	changeActiveDough,
-	incrementCount,
-	decrementCount,
-	removeItemFromCart,
-	clearCart,
+	addToCartOptimistic,
+	changeActivePriceOptimistic,
+	changeActiveDoughOptimistic,
+	incrementCountOptimistic,
+	decrementCountOptimistic,
+	removeItemFromCartOptimistic,
+	clearCartOptimistic,
 } = productsSlice.actions;
 
 export const selectProducts = (state: RootState) => state.products;

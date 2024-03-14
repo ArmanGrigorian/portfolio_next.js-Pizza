@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import productsReducer from "./features/products/productsSlice";
 import sliderReducer from "./features/slider/sliderSlice";
-import { productsApi } from "./services/products";
+import { productsApi } from "./services/productsApi";
 
 export const makeStore = () => {
 	return configureStore({

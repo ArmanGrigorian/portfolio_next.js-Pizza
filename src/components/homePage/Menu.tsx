@@ -8,6 +8,7 @@ import { selectMenuProducts } from "@/lib/features/products/productsSlice";
 export default function Menu() {
 	const menuProducts = useAppSelector(selectMenuProducts)
 	const [parent] = useAutoAnimate();
+	
 	return (
 		<div
 			ref={parent}

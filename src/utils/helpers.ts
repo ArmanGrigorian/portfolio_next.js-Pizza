@@ -1,13 +1,15 @@
 export function updateCountsAndTotalPrice(
 	product: T_pizza,
 	activePrice: number,
-	increment: boolean = true
+	increment: boolean = true,
 ): T_pizza {
 	const { counts, totalPrice, prices } = product;
 
 	return {
 		...product,
-		counts: counts.map((val, idx) => (idx === activePrice ? (increment ? val + 1 : val - 1) : val)),
+		counts: counts.map((val, idx) =>
+			idx === activePrice ? (increment ? (val += 1) : (val -= 1)) : val,
+		),
 		totalPrice: Number(
 			(totalPrice + (increment ? prices[activePrice] : -prices[activePrice])).toFixed(2),
 		),
@@ -23,6 +25,8 @@ export function getEventPageX(e: MouseTouchEvent<HTMLUListElement>) {
 }
 
 export function getTotals(cartProducts: T_cartPizzas): T_total {
+	if (cartProducts.length === 0) return { count: 0, price: 0 };
+	
 	return cartProducts.reduce(
 		(totals, product) => {
 			totals.count += product.count;
@@ -34,4 +38,8 @@ export function getTotals(cartProducts: T_cartPizzas): T_total {
 			price: 0,
 		},
 	);
+}
+
+export function generateIdFromParams(pizza: T_cartPizza) {
+	return (pizza.title + pizza.activeDough + pizza.activeSize).toLowerCase();
 }

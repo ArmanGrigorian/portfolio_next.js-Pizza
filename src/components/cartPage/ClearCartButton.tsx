@@ -1,15 +1,21 @@
 "use client";
 
+import { clearCartOptimistic, selectMenuProducts } from "@/lib/features/products/productsSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { useClearCartMutation, useResetCountsMutation } from "@/lib/services/productsApi";
 import Image from "next/image";
 import trashPic from "../../../public/icons/trash.png";
-import { useAppDispatch } from "@/lib/hook";
-import { clearCart } from "@/lib/features/products/productsSlice";
 
 export default function ClearCartButton() {
 	const dispatch = useAppDispatch();
+	const menuProducts = useAppSelector(selectMenuProducts);
+	const [clearCart] = useClearCartMutation();
+	const [resetCounts] = useResetCountsMutation();
 
-	function handleClick() {
-		dispatch(clearCart());
+	async function handleClick() {
+		dispatch(clearCartOptimistic());
+		await clearCart("");
+		await resetCounts(menuProducts);
 	}
 
 	return (

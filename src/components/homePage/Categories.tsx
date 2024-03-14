@@ -1,5 +1,6 @@
 "use client";
 import {
+	fetchCartProducts,
 	selectProducts,
 	setActiveCategory,
 	setMenuProducts,
@@ -11,21 +12,17 @@ import {
 	setIsMouseDown,
 } from "@/lib/features/slider/sliderSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { useGetPokemonByNameQuery } from "@/lib/services/products";
+import { useGetMenuProductsQuery } from "@/lib/services/productsApi";
 import { getEventPageX } from "@/utils/helpers";
 import { useEffect, useMemo, useRef } from "react";
-import { LOCAL_DATA } from "../../../DATA";
 
 export default function Categories() {
 	const ulRef = useRef<HTMLUListElement>(null);
 
 	const dispatch = useAppDispatch();
-	const { menuProducts, activeCategory, activeSort } = useAppSelector(selectProducts);
+	const { menuProducts, cartProducts, activeCategory, activeSort } = useAppSelector(selectProducts);
 	const { scrollLeft, mouseMoveX, startX, isMouseDown } = useAppSelector(selectSlider);
-	const { data, isLoading, isSuccess, isError } = useGetPokemonByNameQuery({
-		activeCategory,
-		activeSort,
-	});
+	const { data: menuData, isSuccess } = useGetMenuProductsQuery({activeCategory, activeSort});
 
 	const categoriesData = useMemo(() => {
 		return ["All", ...Array.from(new Set(menuProducts.flatMap((pizza) => pizza.categories)))];
@@ -37,14 +34,9 @@ export default function Categories() {
 	}, [mouseMoveX, scrollLeft]);
 
 	useEffect(() => {
-		if (isLoading) {
-			dispatch(setMenuProducts(LOCAL_DATA));
-		} else if (isSuccess) {
-			dispatch(setMenuProducts(data));
-		} else {
-			dispatch(setMenuProducts(LOCAL_DATA));
-		}
-	}, [data, dispatch, isLoading, isSuccess]);
+		if (isSuccess) dispatch(setMenuProducts(menuData));
+		dispatch(fetchCartProducts());
+	}, [dispatch, isSuccess, menuData]);
 
 	function handleMouseDown(e: MouseTouchEvent<HTMLUListElement>) {
 		if (!ulRef.current) return;

@@ -1,18 +1,22 @@
 "use client";
 
-import { changeActiveDough } from "@/lib/features/products/productsSlice";
-import { useAppDispatch } from "@/lib/hook";
+import { changeActiveDoughOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { useChangeActiveDoughMutation } from "@/lib/services/productsApi";
 import { MouseEvent } from "react";
 
 export default function Doughs(pizza: T_pizza) {
 	const { activeDough, doughs } = pizza;
-  const dispatch = useAppDispatch();
-  
-	function handleChangeDough(e: MouseEvent<HTMLButtonElement>) {
+	const dispatch = useAppDispatch();
+	const productsState = useAppSelector(selectProducts);
+	const [changeActiveDough] = useChangeActiveDoughMutation();
+
+	async function handleChangeDough(e: MouseEvent<HTMLButtonElement>) {
 		const target = e.target as HTMLButtonElement;
-		dispatch(changeActiveDough({ pizza, dough: target.dataset.dough || "thin" }));
-  }
-  
+		dispatch(changeActiveDoughOptimistic({ pizza, dough: target.dataset.dough || "thin" }));
+		await changeActiveDough({ productsState, pizza, dough: target.dataset.dough || "thin" });
+	}
+
 	return (
 		<>
 			{doughs.map((dough, idx) => (

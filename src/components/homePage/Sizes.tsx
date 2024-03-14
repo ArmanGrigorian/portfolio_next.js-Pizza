@@ -1,16 +1,20 @@
 "use client";
 
-import { changeActivePrice } from "@/lib/features/products/productsSlice";
-import { useAppDispatch } from "@/lib/hook";
+import { changeActivePriceOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { useChangeActivePriceMutation } from "@/lib/services/productsApi";
 import { MouseEvent } from "react";
 
 export default function Sizes(pizza: T_pizza) {
 	const { sizes, activePrice } = pizza;
 	const dispatch = useAppDispatch();
+	const productsState = useAppSelector(selectProducts);
+	const [changeActivePrice] = useChangeActivePriceMutation();
 
-	function handleChangeSize(e: MouseEvent<HTMLButtonElement>) {
+	async function handleChangeSize(e: MouseEvent<HTMLButtonElement>) {
 		const target = e.target as HTMLButtonElement;
-		dispatch(changeActivePrice({ pizza, idx: Number(target.dataset.idx) }));
+		dispatch(changeActivePriceOptimistic({ pizza, idx: Number(target.dataset.idx) }));
+		await changeActivePrice({ productsState, pizza, idx: Number(target.dataset.idx) });
 	}
 
 	return (

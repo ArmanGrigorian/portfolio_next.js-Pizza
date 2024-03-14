@@ -1,12 +1,11 @@
 "use client";
 
-import { selectActiveSort, setActiveSort } from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { setActiveSort } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 import { ChangeEvent } from "react";
 
 export default function SortPanel() {
 	const dispatch = useAppDispatch();
-	const activeSort = useAppSelector(selectActiveSort);
 
 	function handleChange(e: ChangeEvent<HTMLSelectElement>) {
 		dispatch(setActiveSort(e.target.value.toLowerCase()));

@@ -3,7 +3,7 @@ type MouseTouchEvent<T extends HTMLElement> = MouseEvent<T> | TouchEvent<T>;
 type T_cartPizza = {
 	id?: number;
 	origin_id: number;
-	cart_id: string;
+	cart_id?: string;
 	title: string;
 	image: string;
 	blur: string;
@@ -73,6 +73,11 @@ type activateSliderPayload = {
 	startX: number;
 	scrollLeft: number;
 };
+
+type setProductsPayload = {
+	menu: T_pizzas;
+	cart: T_cartPizzas;
+}
 
 interface productsState {
 	menuProducts: T_pizzas;
