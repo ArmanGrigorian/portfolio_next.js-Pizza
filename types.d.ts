@@ -84,9 +84,27 @@ interface productsState {
 	cartProducts: T_cartPizzas;
 	activeCategory: string;
 	activeSort: string;
+	activePage: number;
+	totalPages: number;
+	menuCategories: string[];
 }
 
 type T_total = {
 	count: number;
 	price: number;
 };
+
+type getActualIdParams = {
+	cart_id?: string;	
+	title?: string;	
+	activeDough?: string;
+	activeSize?: string;
+};
+
+type getMenuProductsParams = {
+	activePage: number;
+	activeCategory: string;
+	activeSort: string;
+}
+
+

@@ -208,5 +208,35 @@
 		"activeDough": "thin",
 		"activePrice": 0,
 		"totalPrice": 0
+	},
+	{
+		"id": 15,
+		"origin_id": 15,
+		"title": "Spicy",
+		"categories": ["spicy", "meat"],
+		"image": "/images/baconPizza.png",
+		"blur": "/blur/baconPizzaBlurred.webp",
+		"prices": [0.3, 0.4, 0.5],
+		"counts": [0, 0, 0],
+		"doughs": ["thin", "classic"],
+		"sizes": ["10", "20", "30"],
+		"activeDough": "thin",
+		"activePrice": 0,
+		"totalPrice": 0
+	},
+	{
+		"id": 16,
+		"origin_id": 16,
+		"title": "Regular",
+		"categories": ["vegetables", "meat"],
+		"image": "/images/cheesePizza.png",
+		"blur": "/blur/cheesePizzaBlurred.webp",
+		"prices": [0.3, 0.4, 0.5],
+		"counts": [0, 0, 0],
+		"doughs": ["thin", "classic"],
+		"sizes": ["10", "20", "30"],
+		"activeDough": "thin",
+		"activePrice": 0,
+		"totalPrice": 0
 	}
 ]

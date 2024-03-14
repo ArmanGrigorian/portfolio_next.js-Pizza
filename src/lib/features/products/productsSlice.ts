@@ -17,6 +17,9 @@ const initialState: productsState = {
 	cartProducts: [],
 	activeCategory: "",
 	activeSort: "title",
+	activePage: 1,
+	totalPages: 2,
+	menuCategories: [],
 };
 
 export const productsSlice = createSlice({
@@ -30,6 +33,18 @@ export const productsSlice = createSlice({
 		},
 		setCartProducts: (state, { payload }: PayloadAction<T_cartPizzas | []>) => {
 			state.cartProducts = payload;
+		},
+		setActivePage: (state, { payload }: PayloadAction<number>) => {
+			state.activePage = payload;
+		},
+		setTotalPages: (state, { payload }: PayloadAction<number>) => {
+			state.totalPages = payload;
+		},
+		setMenuCategories: (state, { payload }: PayloadAction<T_pizzas>) => {
+			state.menuCategories = [
+				"All",
+				...Array.from(new Set(payload.flatMap((pizza) => pizza.categories))),
+			];
 		},
 		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
 			state.activeCategory = payload;
@@ -198,20 +213,26 @@ export const productsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchCartProducts.fulfilled, (state, { payload }: PayloadAction<T_cartPizzas>) => {
-			state.cartProducts = payload;
-		});
+		builder.addCase(
+			fetchCartProducts.fulfilled,
+			(state, { payload }: PayloadAction<T_cartPizzas>) => {
+				state.cartProducts = payload;
+			},
+		);
 		builder.addCase(fetchCartProducts.rejected, (state) => {
 			state.cartProducts = [];
-		})
+		});
 	},
 });
 
 export const {
 	setMenuProducts,
 	setCartProducts,
+	setMenuCategories,
 	setActiveCategory,
 	setActiveSort,
+	setActivePage,
+	setTotalPages,
 	addToCartOptimistic,
 	changeActivePriceOptimistic,
 	changeActiveDoughOptimistic,

@@ -1,10 +1,5 @@
 "use client";
-import {
-	fetchCartProducts,
-	selectProducts,
-	setActiveCategory,
-	setMenuProducts,
-} from "@/lib/features/products/productsSlice";
+import { selectProducts, setActiveCategory } from "@/lib/features/products/productsSlice";
 import {
 	activateSlider,
 	moveSlider,
@@ -12,31 +7,20 @@ import {
 	setIsMouseDown,
 } from "@/lib/features/slider/sliderSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { useGetMenuProductsQuery } from "@/lib/services/productsApi";
 import { getEventPageX } from "@/utils/helpers";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function Categories() {
 	const ulRef = useRef<HTMLUListElement>(null);
 
 	const dispatch = useAppDispatch();
-	const { menuProducts, cartProducts, activeCategory, activeSort } = useAppSelector(selectProducts);
+	const { menuCategories } = useAppSelector(selectProducts);
 	const { scrollLeft, mouseMoveX, startX, isMouseDown } = useAppSelector(selectSlider);
-	const { data: menuData, isSuccess } = useGetMenuProductsQuery({activeCategory, activeSort});
-
-	const categoriesData = useMemo(() => {
-		return ["All", ...Array.from(new Set(menuProducts.flatMap((pizza) => pizza.categories)))];
-	}, [menuProducts]);
 
 	useEffect(() => {
 		if (!ulRef.current) return;
 		ulRef.current.scrollLeft = scrollLeft - mouseMoveX;
 	}, [mouseMoveX, scrollLeft]);
-
-	useEffect(() => {
-		if (isSuccess) dispatch(setMenuProducts(menuData));
-		dispatch(fetchCartProducts());
-	}, [dispatch, isSuccess, menuData]);
 
 	function handleMouseDown(e: MouseTouchEvent<HTMLUListElement>) {
 		if (!ulRef.current) return;
@@ -75,7 +59,7 @@ export default function Categories() {
 			onTouchCancel={() => dispatch(setIsMouseDown(false))}
 			onTouchMove={handleMouseMove}
 			className="categoriesMask px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-5 max-sm:px-5">
-			{categoriesData.map((category, idx) => (
+			{menuCategories.map((category, idx) => (
 				<li
 					key={idx}
 					tabIndex={0}

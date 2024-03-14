@@ -9,14 +9,14 @@ export const productsApi = createApi({
 	tagTypes: ["Products"],
 	endpoints: (builder) => ({
 		getMenuProducts: builder.query({
-			query: (params) => {
-				const { activeCategory, activeSort } = params;
-				return `/menu?categories=*${activeCategory}&sortBy=${activeSort}`;
+			query: (params: getMenuProductsParams) => {
+				const { activeCategory, activeSort, activePage } = params;
+				return `/menu?&page=${activePage}&limit=8&categories=*${activeCategory}&sortBy=${activeSort}`;
 			},
 			providesTags: (result) =>
 				result
 					? [
-							...result.map(({ id }: { id: number }) => ({ type: "Products", id } as const)),
+							...result.items.map(({ id }: { id: number }) => ({ type: "Products", id } as const)),
 							{ type: "Products", id: "LIST" },
 					  ]
 					: [{ type: "Products", id: "LIST" }],

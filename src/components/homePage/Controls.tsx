@@ -1,10 +1,9 @@
 "use client";
+import { productsAPI } from "@/api/api";
 import { addToCartOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { useUpdateMenuProductMutation } from "@/lib/services/productsApi";
-import { useAddToCartMutation } from "@/lib/services/productsApi";
+import { useAddToCartMutation, useUpdateMenuProductMutation } from "@/lib/services/productsApi";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function Controls(pizza: T_pizza) {
 	const { title, counts, activePrice, activeDough, sizes, totalPrice } = pizza;
@@ -12,12 +11,15 @@ export default function Controls(pizza: T_pizza) {
 	const [updateMenuProduct] = useUpdateMenuProductMutation();
 	const [addToCart] = useAddToCartMutation();
 	const productsState = useAppSelector(selectProducts);
-	const searchUrl = `${BASE_URL}/cart?title=${title}&activeDough=${activeDough}&activeSize=${sizes[activePrice]}`;
 
 	async function handleClick() {
 		dispatch(addToCartOptimistic(pizza));
-		const req = await fetch(searchUrl).then((res) => res.json());
-		const actual_id = await req[0]?.id;
+		const { data } = await productsAPI.getActualId({
+			title,
+			activeDough,
+			activeSize: sizes[activePrice],
+		});
+		const actual_id = data[0].id;
 		await addToCart({ productsState, pizza, actual_id });
 		await updateMenuProduct({ productsState, pizza });
 	}
