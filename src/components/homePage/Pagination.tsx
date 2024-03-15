@@ -40,7 +40,6 @@ export default function Pagination() {
 		dispatch(setActivePage(data.selected + 1));
 	}
 
-
 	return (
 		<>
 			<ReactPaginate
@@ -56,7 +55,7 @@ export default function Pagination() {
 				previousLinkClassName="bg-custom-grey-light w-32 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-black font-semibold transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-28 max-sm:h-9 max-sm:rounded-lg"
 				nextLinkClassName="bg-custom-grey-light w-32 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-black font-semibold transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-24 max-sm:h-9 max-sm:rounded-lg"
 				breakLinkClassName="bg-custom-grey-light w-32 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-black font-semibold transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-24 max-sm:h-9 max-sm:rounded-lg"
-				activeLinkClassName="w-11 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-white font-semibold bg-custom-black transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-9 max-sm:h-9 max-sm:rounded-lg"
+				activeLinkClassName="bg-custom-yellow w-11 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-black font-semibold  transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-9 max-sm:h-9 max-sm:rounded-lg"
 			/>
 		</>
 	);

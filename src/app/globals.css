@@ -3,6 +3,6 @@
 @tailwind utilities;
 
 .categoriesMask {
-	mask-image: linear-gradient(90deg, transparent 3%, white 6%, white 93%, transparent 96%);
-	-webkit-mask-image: linear-gradient(90deg, transparent 3%, white 6%, white 93%, transparent 96%);
+	mask-image: linear-gradient(90deg, transparent 0%, white 4%, white 94%, transparent 98%);
+	-webkit-mask-image: linear-gradient(90deg, transparent 0%, white 4%, white 92%, transparent 96%);
 }

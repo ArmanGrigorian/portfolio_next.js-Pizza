@@ -12,9 +12,10 @@ import { useEffect, useRef } from "react";
 
 export default function Categories() {
 	const ulRef = useRef<HTMLUListElement>(null);
+	const startTimeRef = useRef<Date | null>(null);
 
 	const dispatch = useAppDispatch();
-	const { menuCategories } = useAppSelector(selectProducts);
+	const { menuCategories, activeCategory } = useAppSelector(selectProducts);
 	const { scrollLeft, mouseMoveX, startX, isMouseDown } = useAppSelector(selectSlider);
 
 	useEffect(() => {
@@ -26,6 +27,8 @@ export default function Categories() {
 		if (!ulRef.current) return;
 		if (e.type === "touchstart") e.preventDefault();
 
+		e.stopPropagation();
+
 		const scrollLeft = ulRef.current.scrollLeft;
 		const startX = getEventPageX(e) - ulRef.current.offsetLeft;
 
@@ -36,11 +39,24 @@ export default function Categories() {
 		if (!ulRef.current || !isMouseDown) return;
 		if (e.type === "touchstart") e.preventDefault();
 
+		e.stopPropagation();
+
 		const mouseMoveX = getEventPageX(e) - ulRef.current.offsetLeft - startX;
 		dispatch(moveSlider(mouseMoveX));
 	}
 
-	function handleChangeCategory(category: string) {
+	function handleChangeCategoryMouseDown() {
+		startTimeRef.current = new Date();
+	}
+
+	function handleChangeCategoryMouseUp(category: string) {
+		if (!startTimeRef.current) return;
+
+		const endTime = new Date();
+		const elapsedTime = endTime.getTime() - startTimeRef.current.getTime();
+
+		if (elapsedTime > 100) return;
+
 		const newCategory = category === "All" ? "" : category;
 		dispatch(setActiveCategory(newCategory.toLowerCase()));
 	}
@@ -58,17 +74,23 @@ export default function Categories() {
 			onTouchEnd={() => dispatch(setIsMouseDown(false))}
 			onTouchCancel={() => dispatch(setIsMouseDown(false))}
 			onTouchMove={handleMouseMove}
-			className="categoriesMask px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-5 max-sm:px-5">
-			{menuCategories.map((category, idx) => (
-				<li
-					key={idx}
-					tabIndex={0}
-					title={category}
-					onClick={() => handleChangeCategory(category)}
-					className="select-none min-w-44 h-10 rounded-xl shadow-md flex justify-center items-center capitalize font-medium text-lg bg-custom-grey-light text-custom-black transition cursor-pointer hover:bg-custom-black hover:text-custom-white active:scale-95 active:cursor-grabbing max-sm:text-base">
-					{category}
-				</li>
-			))}
+			className="categoriesMask cursor-grab px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-10 active:cursor-grabbing max-sm:px-5 max-sm:gap-4">
+			{menuCategories.map((category, idx) => {
+				const active = activeCategory.length ? activeCategory : "all";
+				return (
+					<li
+						key={idx}
+						tabIndex={0}
+						title={category}
+						onMouseDown={handleChangeCategoryMouseDown}
+						onMouseUp={() => handleChangeCategoryMouseUp(category)}
+						className={`${
+							active === category.toLowerCase() ? "bg-custom-yellow" : ""
+						} select-none min-w-44 h-10 rounded-xl shadow-md flex justify-center items-center capitalize font-medium text-lg bg-custom-grey-light text-custom-black transition cursor-pointer hover:bg-custom-black hover:text-custom-white active:scale-95 active:cursor-grabbing max-sm:text-base`}>
+						{category}
+					</li>
+				);
+			})}
 		</ul>
 	);
 }
