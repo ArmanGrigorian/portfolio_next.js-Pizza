@@ -19,7 +19,7 @@ export default function Controls(pizza: T_pizza) {
 			activeDough,
 			activeSize: sizes[activePrice],
 		});
-		const actual_id = data[0].id;
+		const actual_id = data[0]?.id;
 		await addToCart({ productsState, pizza, actual_id });
 		await updateMenuProduct({ productsState, pizza });
 	}

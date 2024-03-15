@@ -27,11 +27,13 @@ export default function Button() {
 
 				<div className="flex justify-center items-center gap-1 border-l-2 border-custom-white pl-2 max-xsm:border-none max-xsm:pl-0">
 					<Image src={cartPic} width={16} height={16} alt="cart png" priority />
-					<span className="text-custom-white text-base font-bold max-sm:text-sm">{total.count}</span>
+					<span className="text-custom-white text-base font-bold max-sm:text-sm">
+						{total.count}
+					</span>
 				</div>
 			</Link>
 		);
-	} else if (pathname === "/cart") {
+	} else {
 		return (
 			<Link
 				tabIndex={0}

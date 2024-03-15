@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 
-export default function CardInfo({ image, blur, title }: CardInfoProps) {
+export default function CardInfo({ image, blur, title, origin_id }: CardInfoProps) {
 	return (
-		<>
+		<Link href={`/${origin_id}`}
+			className="flex flex-col items-center gap-2 text-custom-black hover:text-custom-yellow">
 			<Image
 				src={image}
 				width={256}
@@ -12,7 +14,7 @@ export default function CardInfo({ image, blur, title }: CardInfoProps) {
 				placeholder="blur"
 				priority
 			/>
-			<h3 className="text-custom-black text-lg font-semibold">{title}</h3>
-		</>
+			<h3 className="text-inherit text-lg font-semibold">{title}</h3>
+		</Link>
 	);
 }

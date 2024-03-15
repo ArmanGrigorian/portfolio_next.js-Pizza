@@ -38,6 +38,7 @@ type CardInfoProps = {
 	image: string;
 	blur: string;
 	title: string;
+	origin_id: number;
 };
 
 type ParamsButtonProps = {
@@ -46,6 +47,12 @@ type ParamsButtonProps = {
 	idx: number;
 	styles: string;
 };
+
+type PizzaPageProps = {
+	params: {
+		origin_id: string
+	}
+}
 
 type PriceTagProps = {
 	activePrice: number;

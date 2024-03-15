@@ -26,7 +26,7 @@ export default function Controls(pizza: T_cartPizza) {
 	async function handleIncrement() {
 		dispatch(incrementCountOptimistic(pizza));
 		const { data } = await productsAPI.getActualId({ cart_id });
-		const actual_id = data[0].id;
+		const actual_id = data[0]?.id;
 		await incrementCountInCart({ cartProducts, pizza, actual_id });
 		await incrementCountInMenu({ menuProducts, pizza });
 	}
