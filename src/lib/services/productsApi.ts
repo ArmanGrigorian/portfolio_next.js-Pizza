@@ -49,7 +49,7 @@ export const productsApi = createApi({
 					body: updatedMenuProduct,
 				};
 			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.id }],
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		changeActivePrice: builder.mutation({
 			query: ({
@@ -79,7 +79,7 @@ export const productsApi = createApi({
 					body: updatedMenuProduct,
 				};
 			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.id }],
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		updateMenuProduct: builder.mutation({
 			query: ({ productsState, pizza }: { productsState: productsState; pizza: T_pizza }) => {
@@ -99,25 +99,7 @@ export const productsApi = createApi({
 					body: updatedProduct,
 				};
 			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.id }],
-		}),
-		resetCounts: builder.mutation({
-			query: (menuProducts: T_pizzas) => {
-				const updatedMenuProduct = menuProducts.map((product) => {
-					return {
-						...product,
-						counts: product.counts.map((val) => (val = 0)),
-						totalPrice: 0,
-					};
-				});
-
-				return {
-					url: `/menu`,
-					method: "PATCH",
-					body: updatedMenuProduct,
-				};
-			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		resetItemCount: builder.mutation({
 			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
@@ -143,7 +125,7 @@ export const productsApi = createApi({
 					body: updatedMenuProducts,
 				};
 			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		incrementCountInMenu: builder.mutation({
 			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
@@ -162,7 +144,7 @@ export const productsApi = createApi({
 					body: updatedMenuProduct,
 				};
 			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		decrementCountInMenu: builder.mutation({
 			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
@@ -252,6 +234,26 @@ export const productsApi = createApi({
 				body: [],
 			}),
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
+		}),
+		resetCounts: builder.mutation({
+			query: (menuProducts: T_pizzas) => {
+				const updatedMenuProducts = menuProducts.map((product) => {
+					return {
+						...product,
+						counts: product.counts.map((val) => (val = 0)),
+						totalPrice: 0,
+					};
+				});
+
+				console.log(updatedMenuProducts);
+
+				return {
+					url: `/menu`,
+					method: "PATCH",
+					body: updatedMenuProducts,
+				};
+			},
+			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		removeItemFromCart: builder.mutation({
 			query: ({ cartProducts, pizza }: { cartProducts: T_cartPizzas; pizza: T_cartPizza }) => {

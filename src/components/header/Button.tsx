@@ -1,18 +1,18 @@
 "use client";
 
+import { selectCartProducts } from "@/lib/features/products/productsSlice";
+import { useAppSelector } from "@/lib/hook";
+import { getTotals } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import cartPic from "../../../public/icons/cart.png";
 import arrowPic from "../../../public/icons/arrow.png";
-import { useAppSelector } from "@/lib/hook";
-import { selectCartProducts } from "@/lib/features/products/productsSlice";
-import { getTotals } from "@/utils/helpers";
+import cartPic from "../../../public/icons/cart.png";
 
 export default function Button() {
 	const pathname = usePathname();
 	const cartProducts = useAppSelector(selectCartProducts);
-	const total = getTotals(cartProducts);
+	const total = getTotals(cartProducts || []);
 
 	if (pathname === "/") {
 		return (

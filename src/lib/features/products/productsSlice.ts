@@ -1,7 +1,22 @@
 import { productsAPI } from "@/api/api";
 import { generateIdFromParams, updateCountsAndTotalPrice } from "@/utils/helpers";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { LOCAL_DATA } from "../../../../DATA";
 import type { RootState } from "../../store";
+
+// This AsyncThunk is used for fetching menuProducts initial state,
+// there is a problem implementing such behavior with RTK Query.
+export const fetchMenuProducts = createAsyncThunk(
+	"products/fetchMenuProducts",
+	async (params: getMenuProductsParams) => {
+		try {
+			const { data } = await productsAPI.getMenuProducts(params);
+			return data;
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
 
 export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", async () => {
 	try {
@@ -35,16 +50,10 @@ export const productsSlice = createSlice({
 			state.cartProducts = payload;
 		},
 		setActivePage: (state, { payload }: PayloadAction<number>) => {
-			state.activePage = payload;
+			state.activePage = payload + 1;
 		},
 		setTotalPages: (state, { payload }: PayloadAction<number>) => {
 			state.totalPages = payload;
-		},
-		setMenuCategories: (state, { payload }: PayloadAction<T_pizzas>) => {
-			state.menuCategories = [
-				"All",
-				...Array.from(new Set(payload.flatMap((pizza) => pizza.categories))),
-			];
 		},
 		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
 			state.activeCategory = payload;
@@ -213,6 +222,22 @@ export const productsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
+		// menu products fetch
+		builder.addCase(fetchMenuProducts.pending, (state) => {
+			state.menuProducts = LOCAL_DATA;
+		});
+		builder.addCase(fetchMenuProducts.fulfilled, (state, { payload }: fetchMenuProductsPayload) => {
+			state.menuProducts = payload.items;
+			state.totalPages = payload.meta.total_pages;
+			state.menuCategories = [
+				"All",
+				...Array.from(new Set(payload.items.flatMap((pizza) => pizza.categories))),
+			];
+		});
+		builder.addCase(fetchMenuProducts.rejected, (state) => {
+			state.menuProducts = LOCAL_DATA;
+		});
+		// cart products fetch
 		builder.addCase(
 			fetchCartProducts.fulfilled,
 			(state, { payload }: PayloadAction<T_cartPizzas>) => {
@@ -228,7 +253,6 @@ export const productsSlice = createSlice({
 export const {
 	setMenuProducts,
 	setCartProducts,
-	setMenuCategories,
 	setActiveCategory,
 	setActiveSort,
 	setActivePage,

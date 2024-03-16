@@ -1,6 +1,9 @@
 "use client";
 import { productsAPI } from "@/api/api";
-import { addToCartOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
+import {
+	addToCartOptimistic,
+	selectProducts
+} from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
 import { useAddToCartMutation, useUpdateMenuProductMutation } from "@/lib/services/productsApi";
 

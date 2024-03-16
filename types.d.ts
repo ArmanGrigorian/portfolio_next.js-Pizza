@@ -50,9 +50,9 @@ type ParamsButtonProps = {
 
 type PizzaPageProps = {
 	params: {
-		origin_id: string
-	}
-}
+		origin_id: string;
+	};
+};
 
 type PriceTagProps = {
 	activePrice: number;
@@ -84,7 +84,7 @@ type activateSliderPayload = {
 type setProductsPayload = {
 	menu: T_pizzas;
 	cart: T_cartPizzas;
-}
+};
 
 interface productsState {
 	menuProducts: T_pizzas;
@@ -102,8 +102,8 @@ type T_total = {
 };
 
 type getActualIdParams = {
-	cart_id?: string;	
-	title?: string;	
+	cart_id?: string;
+	title?: string;
 	activeDough?: string;
 	activeSize?: string;
 };
@@ -112,6 +112,22 @@ type getMenuProductsParams = {
 	activePage: number;
 	activeCategory: string;
 	activeSort: string;
-}
+};
 
+type RootLayoutProps = {
+	children: React.ReactNode;
+	modal: React.ReactNode;
+};
 
+type fetchMenuProductsPayload = {
+	payload: {
+		items: T_pizzas;
+		meta: {
+			current_page: number;
+			per_page: number;
+			remaining_count: number;
+			total_items: number;
+			total_pages: number;
+		};
+	};
+};

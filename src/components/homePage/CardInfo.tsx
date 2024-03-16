@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CardInfo({ image, blur, title, origin_id }: CardInfoProps) {
 	return (
-		<Link href={`/${origin_id}`}
+		<Link href={`/menu/${origin_id}`}
 			className="flex flex-col items-center gap-2 text-custom-black hover:text-custom-yellow">
 			<Image
 				src={image}

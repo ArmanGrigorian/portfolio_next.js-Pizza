@@ -1,11 +1,7 @@
 "use client";
 
 import { productsAPI } from "@/api/api";
-import {
-	decrementCountOptimistic,
-	incrementCountOptimistic,
-	selectProducts,
-} from "@/lib/features/products/productsSlice";
+import { decrementCountOptimistic, incrementCountOptimistic, selectProducts} from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
 import {
 	useDecrementCountInCartMutation,

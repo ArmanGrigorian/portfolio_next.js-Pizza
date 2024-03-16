@@ -1,52 +1,25 @@
 "use client";
 
-import {
-	fetchCartProducts,
-	selectProducts,
-	setActivePage,
-	setMenuCategories,
-	setMenuProducts,
-	setTotalPages,
-} from "@/lib/features/products/productsSlice";
+import { selectProducts, setActivePage } from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { useGetMenuProductsQuery } from "@/lib/services/productsApi";
-import { useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import { LOCAL_DATA } from "../../../DATA";
 
 export default function Pagination() {
 	const dispatch = useAppDispatch();
-	const { activeCategory, activeSort, activePage, totalPages } = useAppSelector(selectProducts);
-	const { data: menuData, isSuccess } = useGetMenuProductsQuery({
-		activeCategory,
-		activeSort,
-		activePage,
-	});
-
-	useEffect(() => {
-		if (isSuccess && menuData) {
-			dispatch(setMenuProducts(menuData.items));
-			dispatch(setMenuCategories(menuData.items));
-			dispatch(setTotalPages(menuData.meta.total_pages));
-		} else {
-			dispatch(setMenuProducts(LOCAL_DATA));
-			dispatch(setMenuCategories(LOCAL_DATA));
-			dispatch(setTotalPages(2));
-		}
-		dispatch(fetchCartProducts());
-	}, [dispatch, isSuccess, menuData]);
+	const { totalPages, activePage } = useAppSelector(selectProducts);
 
 	function handlePageClick(data: { selected: number }) {
-		dispatch(setActivePage(data.selected + 1));
+		dispatch(setActivePage(data.selected));
 	}
 
 	return (
 		<>
 			<ReactPaginate
+				forcePage={activePage - 1}
 				previousLabel={"🍕 Previous"}
 				nextLabel={"Next 🍕"}
 				breakLabel={". 🍕 ."}
-				pageCount={2}
+				pageCount={totalPages}
 				marginPagesDisplayed={2}
 				pageRangeDisplayed={2}
 				onPageChange={handlePageClick}

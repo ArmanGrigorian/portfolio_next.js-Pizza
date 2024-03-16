@@ -7,6 +7,13 @@ const instance = axios.create({
 });
 
 export const productsAPI = {
+	getMenuProducts: (params: getMenuProductsParams) => {
+		const { activeCategory, activeSort, activePage } = params;
+		// return instance.get("/menu");
+		return instance.get(
+			`/menu?&page=${activePage}&limit=8&categories=*${activeCategory}&sortBy=${activeSort}`,
+		);
+	},
 	getCartProducts: () => {
 		return instance.get("/cart");
 	},

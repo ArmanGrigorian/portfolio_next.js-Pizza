@@ -1,21 +1,22 @@
 "use client";
 
-import { clearCartOptimistic, selectMenuProducts } from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { productsAPI } from "@/api/api";
+import { clearCartOptimistic } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 import { useClearCartMutation, useResetCountsMutation } from "@/lib/services/productsApi";
 import Image from "next/image";
 import trashPic from "../../../public/icons/trash.png";
 
 export default function ClearCartButton() {
 	const dispatch = useAppDispatch();
-	const menuProducts = useAppSelector(selectMenuProducts);
 	const [clearCart] = useClearCartMutation();
 	const [resetCounts] = useResetCountsMutation();
 
 	async function handleClick() {
 		dispatch(clearCartOptimistic());
 		await clearCart("");
-		await resetCounts(menuProducts);
+		const { data } = await productsAPI.getMenuProducts();
+		await resetCounts(data);
 	}
 
 	return (

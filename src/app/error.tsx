@@ -19,7 +19,7 @@ export default function Error({
 	}
 
 	return (
-		<main className="max-w-7xl mx-auto h-[100dvh] bg-custom-white">
+		<main className="max-w-7xl mx-auto h-[100dvh] bg-custom-white grid place-items-center">
 			<h1 className="text-custom-black text-5xl font-bold max-sm:text-4xl">
 				Something went wrong!
 			</h1>

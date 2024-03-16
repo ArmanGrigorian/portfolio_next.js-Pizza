@@ -1,6 +1,9 @@
 "use client";
 
-import { changeActiveDoughOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
+import {
+	changeActiveDoughOptimistic,
+	selectProducts
+} from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
 import { useChangeActiveDoughMutation } from "@/lib/services/productsApi";
 import { MouseEvent } from "react";

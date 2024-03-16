@@ -24,7 +24,7 @@ export default async function PizzaPage({ params }: PizzaPageProps) {
 			<div className="flex flex-col items-center gap-5 max-sm:gap-3">
 				<Title title={title} />
 				<Description title={title} />
-				<DoughsParagraph doughs={doughs} />
+				<DoughsParagraph title={title} doughs={doughs} />
 				<SizesParagraph sizes={sizes} prices={prices} />
 			</div>
 		</>

@@ -10,7 +10,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PizzaPageProps): Promise<Metadata> {
 	const { origin_id } = params;
 	const response = await fetch(MENU_URL + "/" + origin_id, { next: { revalidate: 3600 } });
-	if (response.status < 200 || response.status > 399) return notFound();
+	if (response.status === 404) return notFound();
 	const pizza: T_pizza = await response.json();
 
 	return {
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PizzaPageProps): Promise<Meta
 	};
 }
 
-export default function CartLayout({
+export default function PizzaLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;

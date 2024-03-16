@@ -25,8 +25,8 @@ export function getEventPageX(e: MouseTouchEvent<HTMLUListElement>) {
 }
 
 export function getTotals(cartProducts: T_cartPizzas): T_total {
-	if (cartProducts.length === 0) return { count: 0, price: 0 };
-	
+	if (cartProducts.length === 0 || !cartProducts) return { count: 0, price: 0 };
+
 	return cartProducts.reduce(
 		(totals, product) => {
 			totals.count += product.count;
@@ -40,6 +40,6 @@ export function getTotals(cartProducts: T_cartPizzas): T_total {
 	);
 }
 
-export function generateIdFromParams(pizza: T_cartPizza) {
+export function generateIdFromParams(pizza: T_cartPizza): string {
 	return (pizza.title + pizza.activeDough + pizza.activeSize).toLowerCase();
 }

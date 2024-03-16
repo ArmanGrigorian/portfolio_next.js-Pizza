@@ -1,14 +1,39 @@
 "use client";
 
-import { selectMenuProducts } from "@/lib/features/products/productsSlice";
-import { useAppSelector } from "@/lib/hook";
+import {
+	fetchCartProducts,
+	fetchMenuProducts,
+	selectMenuProducts,
+	selectProducts,
+} from "@/lib/features/products/productsSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { useGetMenuProductsQuery } from "@/lib/services/productsApi";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useEffect } from "react";
+import { MenuCard, MenuSkeleton, Pagination } from ".";
 
-import { MenuCard, Pagination } from "."
 
 export default function Menu() {
+	const dispatch = useAppDispatch();
 	const menuProducts = useAppSelector(selectMenuProducts);
 	const [parent] = useAutoAnimate();
+	const { activeCategory, activeSort, activePage } = useAppSelector(selectProducts);
+
+	const {
+		isFetching,
+		isLoading,
+	} = useGetMenuProductsQuery({
+		activeCategory,
+		activeSort,
+		activePage,
+	});
+
+	useEffect(() => {
+		dispatch(fetchMenuProducts({ activeCategory, activeSort, activePage }));
+		dispatch(fetchCartProducts());
+	}, [activeCategory, activePage, activeSort, dispatch]);
+
+	if (isFetching || isLoading) return <MenuSkeleton />;
 
 	return (
 		<>
@@ -19,7 +44,7 @@ export default function Menu() {
 					<MenuCard key={pizza.origin_id} {...pizza} />
 				))}
 			</div>
-			<Pagination/>
+			<Pagination />
 		</>
 	);
 }

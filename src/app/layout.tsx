@@ -21,17 +21,14 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
-	children,
-}: Readonly<{
-	children: React.ReactNode;
-}>) {
+export default function RootLayout({ children, modal }: Readonly<RootLayoutProps>) {
 	return (
 		<html lang="en">
 			<body className={nunito.className}>
 				<StoreProvider>
 					<Header />
 					{children}
+					{modal}
 				</StoreProvider>
 			</body>
 		</html>
