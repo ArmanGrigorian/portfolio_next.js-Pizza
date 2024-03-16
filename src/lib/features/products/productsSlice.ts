@@ -223,9 +223,6 @@ export const productsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// menu products fetch
-		builder.addCase(fetchMenuProducts.pending, (state) => {
-			state.menuProducts = LOCAL_DATA;
-		});
 		builder.addCase(fetchMenuProducts.fulfilled, (state, { payload }: fetchMenuProductsPayload) => {
 			state.menuProducts = payload.items;
 			state.totalPages = payload.meta.total_pages;

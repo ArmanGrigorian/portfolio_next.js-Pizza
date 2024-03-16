@@ -15,7 +15,7 @@ export default function ClearCartButton() {
 	async function handleClick() {
 		dispatch(clearCartOptimistic());
 		await clearCart("");
-		const { data } = await productsAPI.getMenuProducts();
+		const { data } = await productsAPI.getAllProducts();
 		await resetCounts(data);
 	}
 
