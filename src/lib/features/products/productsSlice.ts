@@ -61,6 +61,7 @@ export const productsSlice = createSlice({
 		setActiveSort: (state, { payload }: PayloadAction<string>) => {
 			state.activeSort = payload;
 		},
+		// optimistic change active dough while fetching updated data
 		changeActiveDoughOptimistic: (
 			state,
 			{ payload }: PayloadAction<{ pizza: T_pizza; dough: string }>,
@@ -77,6 +78,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
+		// optimistic change active price and size while fetching updated data
 		changeActivePriceOptimistic: (
 			state,
 			{ payload }: PayloadAction<{ pizza: T_pizza; idx: number }>,
@@ -93,6 +95,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
+		// optimistic add item to cart while fetching updated data
 		addToCartOptimistic: (state, { payload }: PayloadAction<T_pizza>) => {
 			const { id, categories, counts, doughs, prices, sizes, totalPrice, ...pizzaData } = payload;
 			const { origin_id, activePrice } = pizzaData;
@@ -144,8 +147,12 @@ export const productsSlice = createSlice({
 				];
 			}
 		},
-		manageCountOptimistic: (state, { payload }: PayloadAction<{ pizza: T_cartPizza; increment: boolean }>) => {
-			const {pizza, increment} = payload;
+		// optimistic manage increment and decrement actions while fetching updated data
+		manageCountOptimistic: (
+			state,
+			{ payload }: PayloadAction<{ pizza: T_cartPizza; increment: boolean }>,
+		) => {
+			const { pizza, increment } = payload;
 			const { origin_id, cart_id, count, activePrice, price } = pizza;
 			const basePrice = Number((price / count).toFixed(2));
 
@@ -154,7 +161,9 @@ export const productsSlice = createSlice({
 					return {
 						...product,
 						count: increment ? count + 1 : count - 1,
-						price: increment ? Number((price + basePrice).toFixed(2)) : Number((price - basePrice).toFixed(2)),
+						price: increment
+							? Number((price + basePrice).toFixed(2))
+							: Number((price - basePrice).toFixed(2)),
 					};
 				}
 				return product;
@@ -167,6 +176,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
+		// optimistic remove item from cart while fetching updated data
 		removeItemFromCartOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
 			const { origin_id, count, cart_id, activePrice, price } = payload;
 
@@ -188,6 +198,7 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
+		// optimistic clear cart while fetching updated data
 		clearCartOptimistic: (state) => {
 			state.cartProducts = [];
 
@@ -201,7 +212,8 @@ export const productsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		// menu products fetch
+		// menu products fetch, mainly used for initial rendering
+		// until I find the correct way to implement that with RTK query
 		builder.addCase(fetchMenuProducts.fulfilled, (state, { payload }: fetchMenuProductsPayload) => {
 			state.menuProducts = payload.items;
 			state.totalPages = payload.meta.total_pages;
@@ -213,7 +225,8 @@ export const productsSlice = createSlice({
 		builder.addCase(fetchMenuProducts.rejected, (state) => {
 			state.menuProducts = LOCAL_DATA;
 		});
-		// cart products fetch
+		// used for the same reason as fetchMenuProducts. 
+		// Until I find the correct way to implement that with RTK query
 		builder.addCase(
 			fetchCartProducts.fulfilled,
 			(state, { payload }: PayloadAction<T_cartPizzas>) => {

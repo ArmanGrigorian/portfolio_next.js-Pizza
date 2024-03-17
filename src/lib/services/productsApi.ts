@@ -8,6 +8,9 @@ export const productsApi = createApi({
 	baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
 	tagTypes: ["Products"],
 	endpoints: (builder) => ({
+		// used for fetching menuProducts but not for initial state...
+		// trying to set initial state with RTK Query is unstoppable
+		// so I use AsyncThunk
 		getMenuProducts: builder.query({
 			query: (params: getMenuProductsParams) => {
 				const { activeCategory, activeSort, activePage } = params;
@@ -81,6 +84,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
+		// after crud operation there is a need to update counts and total price
 		updateMenuProduct: builder.mutation({
 			query: ({ productsState, pizza }: { productsState: productsState; pizza: T_pizza }) => {
 				const { id, ...pizzaData } = pizza;
@@ -101,6 +105,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
+		// when single pizza is removed from cart
 		resetItemCount: builder.mutation({
 			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
 				const { origin_id, count, activePrice, price } = pizza;
@@ -127,6 +132,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
+		// manage pizza count in menu
 		manageCountInMenu: builder.mutation({
 			query: ({
 				menuProducts,
@@ -154,6 +160,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
+		// add to cart form menu
 		addToCart: builder.mutation({
 			query: ({
 				productsState,
@@ -216,6 +223,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
+		// remove everything from cart
 		clearCart: builder.mutation({
 			query: () => ({
 				url: `/cart`,
@@ -224,6 +232,7 @@ export const productsApi = createApi({
 			}),
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
+		// after clearing cart there is a need to reset counts and total price
 		resetCounts: builder.mutation({
 			query: (menuProducts: T_pizzas) => {
 				const updatedMenuProducts = menuProducts.map((product) => {
@@ -244,6 +253,8 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
+		// after removing item from cart there is a need 
+		// to update info in database and reset counts and total price there
 		removeItemFromCart: builder.mutation({
 			query: ({ cartProducts, pizza }: { cartProducts: T_cartPizzas; pizza: T_cartPizza }) => {
 				const { cart_id } = pizza;
@@ -258,6 +269,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
+		// after incrementing or decrementing count there is a need to update info in database 
 		manageCountInCart: builder.mutation({
 			query: ({
 				cartProducts,
