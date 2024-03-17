@@ -171,7 +171,7 @@ export const productsSlice = createSlice({
 
 			state.menuProducts = state.menuProducts.map((product) => {
 				if (product.origin_id === origin_id) {
-					return updateCountsAndTotalPrice(product, activePrice, false);
+					return updateCountsAndTotalPrice(product, activePrice, increment ? true : false);
 				}
 				return product;
 			});
@@ -225,7 +225,7 @@ export const productsSlice = createSlice({
 		builder.addCase(fetchMenuProducts.rejected, (state) => {
 			state.menuProducts = LOCAL_DATA;
 		});
-		// used for the same reason as fetchMenuProducts. 
+		// used for the same reason as fetchMenuProducts.
 		// Until I find the correct way to implement that with RTK query
 		builder.addCase(
 			fetchCartProducts.fulfilled,
