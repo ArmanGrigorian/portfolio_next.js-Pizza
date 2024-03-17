@@ -144,38 +144,17 @@ export const productsSlice = createSlice({
 				];
 			}
 		},
-		incrementCountOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
-			const { origin_id, cart_id, count, activePrice, price } = payload;
+		manageCountOptimistic: (state, { payload }: PayloadAction<{ pizza: T_cartPizza; increment: boolean }>) => {
+			const {pizza, increment} = payload;
+			const { origin_id, cart_id, count, activePrice, price } = pizza;
 			const basePrice = Number((price / count).toFixed(2));
 
 			state.cartProducts = state.cartProducts.map((product) => {
 				if (product.cart_id === cart_id) {
 					return {
 						...product,
-						count: count + 1,
-						price: Number((price + basePrice).toFixed(2)),
-					};
-				}
-				return product;
-			});
-
-			state.menuProducts = state.menuProducts.map((product) => {
-				if (product.origin_id === origin_id) {
-					return updateCountsAndTotalPrice(product, activePrice, true);
-				}
-				return product;
-			});
-		},
-		decrementCountOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
-			const { origin_id, cart_id, count, activePrice, price } = payload;
-			const basePrice = Number((price / count).toFixed(2));
-
-			state.cartProducts = state.cartProducts.map((product) => {
-				if (product.cart_id === cart_id) {
-					return {
-						...product,
-						count: count - 1,
-						price: Number((price - basePrice).toFixed(2)),
+						count: increment ? count + 1 : count - 1,
+						price: increment ? Number((price + basePrice).toFixed(2)) : Number((price - basePrice).toFixed(2)),
 					};
 				}
 				return product;
@@ -257,8 +236,7 @@ export const {
 	addToCartOptimistic,
 	changeActivePriceOptimistic,
 	changeActiveDoughOptimistic,
-	incrementCountOptimistic,
-	decrementCountOptimistic,
+	manageCountOptimistic,
 	removeItemFromCartOptimistic,
 	clearCartOptimistic,
 } = productsSlice.actions;

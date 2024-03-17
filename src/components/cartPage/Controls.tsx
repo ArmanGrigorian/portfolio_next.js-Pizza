@@ -2,8 +2,7 @@
 
 import { productsAPI } from "@/api/api";
 import {
-	decrementCountOptimistic,
-	incrementCountOptimistic,
+	manageCountOptimistic,
 	selectProducts,
 } from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
@@ -20,7 +19,7 @@ export default function Controls(pizza: T_cartPizza) {
 	const [manageCountInMenu] = useManageCountInMenuMutation();
 
 	async function handleIncrement() {
-		dispatch(incrementCountOptimistic(pizza));
+		dispatch(manageCountOptimistic({pizza, increment: true}));
 		const { data } = await productsAPI.getActualId({ cart_id });
 		const actual_id = data[0]?.id;
 		await manageCountInCart({ cartProducts, pizza, actual_id, increment: true });
@@ -29,7 +28,7 @@ export default function Controls(pizza: T_cartPizza) {
 
 	async function handleDecrement() {
 		if (count === 1) return;
-		dispatch(decrementCountOptimistic(pizza));
+		dispatch(manageCountOptimistic({ pizza, increment: false }));
 		const { data } = await productsAPI.getActualId({ cart_id });
 		const actual_id = data[0].id;
 		await manageCountInCart({ cartProducts, pizza, actual_id, increment: false });
