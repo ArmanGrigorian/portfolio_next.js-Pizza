@@ -269,15 +269,17 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
-		incrementCountInCart: builder.mutation({
+		manageCountInCart: builder.mutation({
 			query: ({
 				cartProducts,
 				pizza,
 				actual_id,
+				increment: increment,
 			}: {
 				cartProducts: T_cartPizzas;
 				pizza: T_cartPizza;
 				actual_id: number;
+				increment: boolean;
 			}) => {
 				const { cart_id, count, price } = pizza;
 				const basePrice = Number((price / count).toFixed(2));
@@ -286,40 +288,8 @@ export const productsApi = createApi({
 					if (product.cart_id === cart_id) {
 						return {
 							...product,
-							count: count + 1,
+							count: increment? count + 1 : count - 1,
 							price: Number((price + basePrice).toFixed(2)),
-						};
-					}
-					return aggr;
-				}, {});
-
-				return {
-					url: `/cart/${actual_id}`,
-					method: "PATCH",
-					body: updatedCartProduct,
-				};
-			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
-		}),
-		decrementCountInCart: builder.mutation({
-			query: ({
-				cartProducts,
-				pizza,
-				actual_id,
-			}: {
-				cartProducts: T_cartPizzas;
-				pizza: T_cartPizza;
-				actual_id: number;
-			}) => {
-				const { cart_id, count, price } = pizza;
-				const basePrice = Number((price / count).toFixed(2));
-
-				const updatedCartProduct = cartProducts.reduce((aggr, product) => {
-					if (product.cart_id === cart_id) {
-						return {
-							...product,
-							count: count - 1,
-							price: Number((price - basePrice).toFixed(2)),
 						};
 					}
 					return aggr;
@@ -348,6 +318,5 @@ export const {
 	useRemoveItemFromCartMutation,
 	useIncrementCountInMenuMutation,
 	useDecrementCountInMenuMutation,
-	useIncrementCountInCartMutation,
-	useDecrementCountInCartMutation,
+	useManageCountInCartMutation,
 } = productsApi;
