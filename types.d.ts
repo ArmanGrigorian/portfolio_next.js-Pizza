@@ -120,14 +120,12 @@ type RootLayoutProps = {
 };
 
 type fetchMenuProductsPayload = {
-	payload: {
-		items: T_pizzas;
-		meta: {
-			current_page: number;
-			per_page: number;
-			remaining_count: number;
-			total_items: number;
-			total_pages: number;
-		};
+	items: T_pizzas;
+	meta: {
+		current_page: number;
+		per_page: number;
+		remaining_count: number;
+		total_items: number;
+		total_pages: number;
 	};
 };

@@ -4,8 +4,6 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { LOCAL_DATA } from "../../../../DATA";
 import type { RootState } from "../../store";
 
-// This AsyncThunk is used for fetching menuProducts initial state,
-// there is a problem implementing such behavior with RTK Query.
 export const fetchMenuProducts = createAsyncThunk(
 	"products/fetchMenuProducts",
 	async (params: getMenuProductsParams) => {
@@ -214,14 +212,17 @@ export const productsSlice = createSlice({
 	extraReducers: (builder) => {
 		// menu products fetch, mainly used for initial rendering
 		// until I find the correct way to implement that with RTK query
-		builder.addCase(fetchMenuProducts.fulfilled, (state, { payload }: fetchMenuProductsPayload) => {
-			state.menuProducts = payload.items;
-			state.totalPages = payload.meta.total_pages;
-			state.menuCategories = [
-				"All",
-				...Array.from(new Set(payload.items.flatMap((pizza) => pizza.categories))),
-			];
-		});
+		builder.addCase(
+			fetchMenuProducts.fulfilled,
+			(state, { payload }: PayloadAction<fetchMenuProductsPayload>) => {
+				state.menuProducts = payload.items;
+				state.totalPages = payload.meta.total_pages;
+				state.menuCategories = [
+					"All",
+					...Array.from(new Set(payload.items.flatMap((pizza) => pizza.categories))),
+				];
+			},
+		);
 		builder.addCase(fetchMenuProducts.rejected, (state) => {
 			state.menuProducts = LOCAL_DATA;
 		});
