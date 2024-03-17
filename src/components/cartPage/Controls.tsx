@@ -1,10 +1,7 @@
 "use client";
 
 import { productsAPI } from "@/api/api";
-import {
-	manageCountOptimistic,
-	selectProducts,
-} from "@/lib/features/products/productsSlice";
+import { manageCountOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
 import {
 	useManageCountInCartMutation,
@@ -18,15 +15,15 @@ export default function Controls(pizza: T_cartPizza) {
 	const [manageCountInCart] = useManageCountInCartMutation();
 	const [manageCountInMenu] = useManageCountInMenuMutation();
 
-	async function handleIncrement() {
-		dispatch(manageCountOptimistic({pizza, increment: true}));
+	async function handleIncrement(pizza: T_cartPizza) {
+		dispatch(manageCountOptimistic({ pizza, increment: true }));
 		const { data } = await productsAPI.getActualId({ cart_id });
 		const actual_id = data[0]?.id;
 		await manageCountInCart({ cartProducts, pizza, actual_id, increment: true });
 		await manageCountInMenu({ menuProducts, pizza, increment: true });
 	}
 
-	async function handleDecrement() {
+	async function handleDecrement(pizza: T_cartPizza) {
 		if (count === 1) return;
 		dispatch(manageCountOptimistic({ pizza, increment: false }));
 		const { data } = await productsAPI.getActualId({ cart_id });
@@ -40,7 +37,7 @@ export default function Controls(pizza: T_cartPizza) {
 			<button
 				type="button"
 				title="decrement"
-				onClick={handleDecrement}
+				onClick={() => handleDecrement(pizza)}
 				className={`${
 					count === 1 && "opacity-0 cursor-default"
 				} border w-10 h-10 rounded-full text-custom-grey-dark text-base font-black transition hover:bg-custom-black hover:text-custom-white active:scale-95`}>
@@ -52,7 +49,7 @@ export default function Controls(pizza: T_cartPizza) {
 			<button
 				type="button"
 				title="increment"
-				onClick={handleIncrement}
+				onClick={() => handleIncrement(pizza)}
 				className="border w-10 h-10 rounded-full text-custom-grey-dark text-base font-black transition hover:bg-custom-black hover:text-custom-white active:scale-95">
 				+
 			</button>

@@ -180,7 +180,7 @@ export const productsApi = createApi({
 					activeSize: sizes[activePrice],
 				};
 
-				const search = productsState.cartProducts.find(
+				const search = productsState.cartProducts.some(
 					(product) =>
 						product.title === newCartProduct.title &&
 						product.activeDough === newCartProduct.activeDough &&

@@ -11,7 +11,7 @@ export default function Controls(pizza: T_pizza) {
 	const [addToCart] = useAddToCartMutation();
 	const productsState = useAppSelector(selectProducts);
 
-	async function handleClick() {
+	async function handleClick(pizza: T_pizza) {
 		dispatch(addToCartOptimistic(pizza));
 		const { data } = await productsAPI.getActualId({
 			title,
@@ -30,7 +30,7 @@ export default function Controls(pizza: T_pizza) {
 			<button
 				type="button"
 				title="Add to cart"
-				onClick={handleClick}
+				onClick={() => handleClick(pizza)}
 				className="px-3 py-0.5 border-2 border-custom-orange text-custom-orange text-sm font-bold rounded-lg shadow transition hover:bg-custom-orange hover:text-custom-white active:scale-95">
 				Add {counts[activePrice]}
 			</button>
