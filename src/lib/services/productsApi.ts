@@ -44,7 +44,7 @@ export const productsApi = createApi({
 						};
 					}
 					return aggr;
-				}, {});
+				}, {} as T_pizza);
 
 				return {
 					url: `/menu/${origin_id}`,
@@ -74,7 +74,7 @@ export const productsApi = createApi({
 						};
 					}
 					return aggr;
-				}, {});
+				}, {} as T_pizza);
 
 				return {
 					url: `/menu/${origin_id}`,
@@ -87,15 +87,14 @@ export const productsApi = createApi({
 		// after crud operation there is a need to update counts and total price
 		updateMenuProduct: builder.mutation({
 			query: ({ productsState, pizza }: { productsState: productsState; pizza: T_pizza }) => {
-				const { id, ...pizzaData } = pizza;
-				const { origin_id, activePrice } = pizzaData;
+				const { origin_id, activePrice } = pizza;
 
 				const updatedProduct = productsState.menuProducts.reduce((aggr, product) => {
 					if (product.origin_id === origin_id) {
 						return updateCountsAndTotalPrice(product, activePrice, true);
 					}
 					return aggr;
-				}, {});
+				}, {} as T_pizza);
 
 				return {
 					url: `/menu/${origin_id}`,
@@ -122,7 +121,7 @@ export const productsApi = createApi({
 						};
 					}
 					return aggr;
-				}, {});
+				}, {} as T_pizza);
 
 				return {
 					url: `/menu/${origin_id}`,
@@ -150,7 +149,7 @@ export const productsApi = createApi({
 						return updateCountsAndTotalPrice(product, activePrice, increment ? true : false);
 					}
 					return aggr;
-				}, {});
+				}, {} as T_pizza);
 
 				return {
 					url: `/menu/${origin_id}`,
@@ -243,8 +242,6 @@ export const productsApi = createApi({
 					};
 				});
 
-				console.log(updatedMenuProducts);
-
 				return {
 					url: `/menu`,
 					method: "PATCH",
@@ -253,7 +250,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
-		// after removing item from cart there is a need 
+		// after removing item from cart there is a need
 		// to update info in database and reset counts and total price there
 		removeItemFromCart: builder.mutation({
 			query: ({ cartProducts, pizza }: { cartProducts: T_cartPizzas; pizza: T_cartPizza }) => {
@@ -269,7 +266,7 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
-		// after incrementing or decrementing count there is a need to update info in database 
+		// after incrementing or decrementing count there is a need to update info in database
 		manageCountInCart: builder.mutation({
 			query: ({
 				cartProducts,
@@ -290,11 +287,13 @@ export const productsApi = createApi({
 						return {
 							...product,
 							count: increment ? count + 1 : count - 1,
-							price: Number((price + basePrice).toFixed(2)),
+							price: increment
+								? Number((price + basePrice).toFixed(2))
+								: Number((price - basePrice).toFixed(2)),
 						};
 					}
 					return aggr;
-				}, {});
+				}, {} as T_cartPizza);
 
 				return {
 					url: `/cart/${actual_id}`,
