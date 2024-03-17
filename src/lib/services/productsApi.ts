@@ -127,13 +127,21 @@ export const productsApi = createApi({
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
-		incrementCountInMenu: builder.mutation({
-			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
+		manageCountInMenu: builder.mutation({
+			query: ({
+				menuProducts,
+				pizza,
+				increment,
+			}: {
+				menuProducts: T_pizzas;
+				pizza: T_cartPizza;
+				increment: boolean;
+			}) => {
 				const { origin_id, activePrice } = pizza;
 
 				const updatedMenuProduct = menuProducts.reduce((aggr, product) => {
 					if (product.origin_id === origin_id) {
-						return updateCountsAndTotalPrice(product, activePrice, true);
+						return updateCountsAndTotalPrice(product, activePrice, increment ? true : false);
 					}
 					return aggr;
 				}, {});
@@ -145,25 +153,6 @@ export const productsApi = createApi({
 				};
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
-		}),
-		decrementCountInMenu: builder.mutation({
-			query: ({ menuProducts, pizza }: { menuProducts: T_pizzas; pizza: T_cartPizza }) => {
-				const { origin_id, count, activePrice } = pizza;
-
-				const updatedMenuProduct = menuProducts.reduce((aggr, product) => {
-					if (product.origin_id === origin_id) {
-						return updateCountsAndTotalPrice(product, activePrice, false);
-					}
-					return aggr;
-				}, {});
-
-				return {
-					url: `/menu/${origin_id}`,
-					method: "PATCH",
-					body: updatedMenuProduct,
-				};
-			},
-			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
 		addToCart: builder.mutation({
 			query: ({
@@ -288,7 +277,7 @@ export const productsApi = createApi({
 					if (product.cart_id === cart_id) {
 						return {
 							...product,
-							count: increment? count + 1 : count - 1,
+							count: increment ? count + 1 : count - 1,
 							price: Number((price + basePrice).toFixed(2)),
 						};
 					}
@@ -316,7 +305,6 @@ export const {
 	useAddToCartMutation,
 	useClearCartMutation,
 	useRemoveItemFromCartMutation,
-	useIncrementCountInMenuMutation,
-	useDecrementCountInMenuMutation,
+	useManageCountInMenuMutation,
 	useManageCountInCartMutation,
 } = productsApi;
