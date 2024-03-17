@@ -318,7 +318,7 @@ export const productsApi = createApi({
 					if (product.cart_id === cart_id) {
 						return {
 							...product,
-							count: count + 1,
+							count: count - 1,
 							price: Number((price - basePrice).toFixed(2)),
 						};
 					}
