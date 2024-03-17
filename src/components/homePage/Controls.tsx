@@ -1,26 +1,14 @@
 "use client";
-import { productsAPI } from "@/api/api";
-import { addToCartOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import { useAddToCartMutation, useUpdateMenuProductMutation } from "@/lib/services/productsApi";
+
+import { fetchAddToCart } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 
 export default function Controls(pizza: T_pizza) {
-	const { title, counts, activePrice, activeDough, sizes, totalPrice } = pizza;
+	const { counts, activePrice, totalPrice } = pizza;
 	const dispatch = useAppDispatch();
-	const [updateMenuProduct] = useUpdateMenuProductMutation();
-	const [addToCart] = useAddToCartMutation();
-	const productsState = useAppSelector(selectProducts);
 
-	async function handleClick() {
-		dispatch(addToCartOptimistic(pizza));
-		const { data } = await productsAPI.getActualId({
-			title,
-			activeDough,
-			activeSize: sizes[activePrice],
-		});
-		const actual_id = data[0]?.id;
-		await addToCart({ productsState, pizza, actual_id });
-		await updateMenuProduct({ productsState, pizza });
+	async function handleClick(pizza: T_pizza) {
+		dispatch(fetchAddToCart(pizza));
 	}
 
 	return (
@@ -30,7 +18,7 @@ export default function Controls(pizza: T_pizza) {
 			<button
 				type="button"
 				title="Add to cart"
-				onClick={handleClick}
+				onClick={()=> handleClick(pizza)}
 				className="px-3 py-0.5 border-2 border-custom-orange text-custom-orange text-sm font-bold rounded-lg shadow transition hover:bg-custom-orange hover:text-custom-white active:scale-95">
 				Add {counts[activePrice]}
 			</button>

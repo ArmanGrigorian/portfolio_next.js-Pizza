@@ -1,25 +1,13 @@
 "use client";
 
-import {
-	removeItemFromCartOptimistic,
-	selectProducts,
-} from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
-import {
-	 useResetItemCountMutation,
-	useRemoveItemFromCartMutation,
-} from "@/lib/services/productsApi";
+import { fetchRemoveItemFromCart } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 
 export default function RemoveButton(pizza: T_cartPizza) {
 	const dispatch = useAppDispatch();
-	const { menuProducts, cartProducts } = useAppSelector(selectProducts);
-	const [removeItemFromCart] = useRemoveItemFromCartMutation();
-	const [resetItemCount] = useResetItemCountMutation();
 
 	async function handleClick() {
-		dispatch(removeItemFromCartOptimistic(pizza));
-		await removeItemFromCart({ cartProducts, pizza });
-		await resetItemCount({ menuProducts, pizza });
+		dispatch(fetchRemoveItemFromCart(pizza));
 	}
 
 	return (

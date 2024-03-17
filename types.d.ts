@@ -94,6 +94,7 @@ interface productsState {
 	activePage: number;
 	totalPages: number;
 	menuCategories: string[];
+	loadingState: "loading" | "success" | "error";
 }
 
 type T_total = {
@@ -120,14 +121,12 @@ type RootLayoutProps = {
 };
 
 type fetchMenuProductsPayload = {
-	payload: {
-		items: T_pizzas;
-		meta: {
-			current_page: number;
-			per_page: number;
-			remaining_count: number;
-			total_items: number;
-			total_pages: number;
-		};
+	items: T_pizzas;
+	meta: {
+		current_page: number;
+		per_page: number;
+		remaining_count: number;
+		total_items: number;
+		total_pages: number;
 	};
 };
