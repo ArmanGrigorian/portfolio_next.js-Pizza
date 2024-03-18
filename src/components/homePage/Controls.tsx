@@ -1,18 +1,16 @@
 "use client";
 import { productsAPI } from "@/api/api";
-import { addToCartOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { selectProducts } from "@/lib/features/products/productsSlice";
+import { useAppSelector } from "@/lib/hook";
 import { useAddToCartMutation, useUpdateMenuProductMutation } from "@/lib/services/productsApi";
 
 export default function Controls(pizza: T_pizza) {
 	const { title, counts, activePrice, activeDough, sizes, totalPrice } = pizza;
-	const dispatch = useAppDispatch();
 	const [updateMenuProduct] = useUpdateMenuProductMutation();
 	const [addToCart] = useAddToCartMutation();
 	const productsState = useAppSelector(selectProducts);
 
 	async function handleClick(pizza: T_pizza) {
-		dispatch(addToCartOptimistic(pizza));
 		const { data } = await productsAPI.getActualId({
 			title,
 			activeDough,

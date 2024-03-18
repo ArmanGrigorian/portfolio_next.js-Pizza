@@ -1,8 +1,8 @@
 "use client";
 
 import { productsAPI } from "@/api/api";
-import { manageCountOptimistic, selectProducts } from "@/lib/features/products/productsSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hook";
+import { selectProducts } from "@/lib/features/products/productsSlice";
+import { useAppSelector } from "@/lib/hook";
 import {
 	useManageCountInCartMutation,
 	useManageCountInMenuMutation,
@@ -10,13 +10,11 @@ import {
 
 export default function Controls(pizza: T_cartPizza) {
 	const { cart_id, count } = pizza;
-	const dispatch = useAppDispatch();
 	const { menuProducts, cartProducts } = useAppSelector(selectProducts);
 	const [manageCountInCart] = useManageCountInCartMutation();
 	const [manageCountInMenu] = useManageCountInMenuMutation();
 
 	async function handleIncrement(pizza: T_cartPizza) {
-		dispatch(manageCountOptimistic({ pizza, increment: true }));
 		const { data } = await productsAPI.getActualId({ cart_id });
 		const actual_id = data[0]?.id;
 		await manageCountInCart({ cartProducts, pizza, actual_id, increment: true });
@@ -25,7 +23,6 @@ export default function Controls(pizza: T_cartPizza) {
 
 	async function handleDecrement(pizza: T_cartPizza) {
 		if (count === 1) return;
-		dispatch(manageCountOptimistic({ pizza, increment: false }));
 		const { data } = await productsAPI.getActualId({ cart_id });
 		const actual_id = data[0].id;
 		await manageCountInCart({ cartProducts, pizza, actual_id, increment: false });

@@ -1,5 +1,6 @@
 import { generateIdFromParams, updateCountsAndTotalPrice } from "@/utils/helpers";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { addToCartOptimistic, changeActiveDoughOptimistic, changeActivePriceOptimistic, clearCartOptimistic, manageCountOptimistic, removeItemFromCartOptimistic } from "../features/products/productsSlice";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -52,6 +53,9 @@ export const productsApi = createApi({
 					body: updatedMenuProduct,
 				};
 			},
+			async onQueryStarted(arg, { dispatch }) {
+				dispatch(changeActiveDoughOptimistic({pizza: arg.pizza, dough: arg.dough}));
+			}, 
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		changeActivePrice: builder.mutation({
@@ -82,6 +86,9 @@ export const productsApi = createApi({
 					body: updatedMenuProduct,
 				};
 			},
+			async onQueryStarted(arg, { dispatch }) {
+					dispatch(changeActivePriceOptimistic({pizza: arg.pizza, idx: arg.idx}));
+			}, 
 			invalidatesTags: (result) => [{ type: "Products", id: result.origin_id }],
 		}),
 		// after crud operation there is a need to update counts and total price
@@ -220,6 +227,9 @@ export const productsApi = createApi({
 					};
 				}
 			},
+			async onQueryStarted(arg, { dispatch }) {
+				dispatch(addToCartOptimistic(arg.pizza));
+			}, 
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
 		// remove everything from cart
@@ -229,6 +239,9 @@ export const productsApi = createApi({
 				method: "PATCH",
 				body: [],
 			}),
+			async onQueryStarted(arg, { dispatch }) {
+				dispatch(clearCartOptimistic());
+			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
 		// after clearing cart there is a need to reset counts and total price
@@ -264,6 +277,9 @@ export const productsApi = createApi({
 					body: updatedCartProducts,
 				};
 			},
+			async onQueryStarted(arg, { dispatch }) {
+				dispatch(removeItemFromCartOptimistic(arg.pizza));
+			}, 
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
 		// after incrementing or decrementing count there is a need to update info in database
@@ -300,6 +316,9 @@ export const productsApi = createApi({
 					method: "PATCH",
 					body: updatedCartProduct,
 				};
+			},
+			async onQueryStarted(arg, { dispatch }) {
+				dispatch(manageCountOptimistic({ pizza: arg.pizza, increment: arg.increment }));
 			},
 			invalidatesTags: (result) => [{ type: "Products", id: result.cart_id }],
 		}),
