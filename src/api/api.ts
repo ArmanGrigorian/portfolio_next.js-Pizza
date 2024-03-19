@@ -13,11 +13,8 @@ export const productsAPI = {
 	getAllProducts: () => {
 		return instance.get("/menu");
 	},
-	getMenuProducts: (params: getMenuProductsParams) => {
-		const { activeCategory, activeSort, activePage } = params;
-		return instance.get(
-			`/menu?&page=${activePage}&limit=8&categories=*${activeCategory}&sortBy=${activeSort}`,
-		);
+	getMenuProducts: (activePage: number) => {
+		return instance.get(`/menu?&page=${activePage}&limit=8`);
 	},
 	getCartProducts: () => {
 		return instance.get("/cart");

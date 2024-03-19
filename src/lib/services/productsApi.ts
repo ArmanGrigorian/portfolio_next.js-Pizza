@@ -13,9 +13,8 @@ export const productsApi = createApi({
 		// trying to set initial state with RTK Query is unstoppable
 		// so I use AsyncThunk
 		getMenuProducts: builder.query({
-			query: (params: getMenuProductsParams) => {
-				const { activeCategory, activeSort, activePage } = params;
-				return `/menu?&page=${activePage}&limit=8&categories=*${activeCategory}&sortBy=${activeSort}`;
+			query: (activePage: number) => {
+				return `/menu?&page=${activePage}&limit=8`;
 			},
 			providesTags: (result) =>
 				result

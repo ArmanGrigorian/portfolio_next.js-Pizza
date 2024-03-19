@@ -6,10 +6,11 @@ import type { RootState } from "../../store";
 
 export const fetchMenuProducts = createAsyncThunk(
 	"products/fetchMenuProducts",
-	async (params: getMenuProductsParams) => {
+	async (activePage: number) => {
 		try {
-			const { data } = await productsAPI.getMenuProducts(params);
-			return data;
+			const { data: menu } = await productsAPI.getMenuProducts(activePage);
+			const { data: allProducts } = await productsAPI.getAllProducts();
+			return { menu, allProducts };
 		} catch (err) {
 			console.error(err);
 		}
@@ -26,6 +27,7 @@ export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", 
 });
 
 const initialState: productsState = {
+	initialProducts: [],
 	menuProducts: [],
 	cartProducts: [],
 	activeCategory: "",
@@ -41,12 +43,6 @@ export const productsSlice = createSlice({
 	initialState: initialState,
 
 	reducers: {
-		setMenuProducts: (state, { payload }: PayloadAction<T_pizzas>) => {
-			state.menuProducts = payload;
-		},
-		setCartProducts: (state, { payload }: PayloadAction<T_cartPizzas | []>) => {
-			state.cartProducts = payload;
-		},
 		setActivePage: (state, { payload }: PayloadAction<number>) => {
 			state.activePage = payload + 1;
 		},
@@ -55,9 +51,25 @@ export const productsSlice = createSlice({
 		},
 		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
 			state.activeCategory = payload;
+			if (!payload.length) {
+				state.menuProducts = state.initialProducts.slice((state.activePage - 1) * 8);
+			} else {
+				state.menuProducts = state.initialProducts.filter((product) =>
+					product.categories.includes(payload),
+				);
+			}
 		},
 		setActiveSort: (state, { payload }: PayloadAction<string>) => {
 			state.activeSort = payload;
+			if (payload === "title") {
+				state.menuProducts.sort((a, b) => a.title.localeCompare(b.title));
+			} else if (payload === "-title") {
+				state.menuProducts.sort((a, b) => b.title.localeCompare(a.title));
+			} else if (payload === "prices") {
+				state.menuProducts.sort((a, b) => a.prices[a.activePrice] - b.prices[b.activePrice]);
+			} else if (payload === "-prices") {
+				state.menuProducts.sort((a, b) => b.prices[b.activePrice] - a.prices[a.activePrice]);
+			}
 		},
 		// optimistic change active dough while fetching updated data
 		changeActiveDoughOptimistic: (
@@ -212,19 +224,26 @@ export const productsSlice = createSlice({
 	extraReducers: (builder) => {
 		// menu products fetch, mainly used for initial rendering
 		// until I find the correct way to implement that with RTK query
-		builder.addCase(
-			fetchMenuProducts.fulfilled,
-			(state, { payload }: PayloadAction<fetchMenuProductsPayload>) => {
-				state.menuProducts = payload.items;
-				state.totalPages = payload.meta.total_pages;
-				state.menuCategories = [
-					"All",
-					...Array.from(new Set(payload.items.flatMap((pizza) => pizza.categories))),
-				];
-			},
-		);
+		builder.addCase(fetchMenuProducts.fulfilled, (state, action) => {
+			const payload = action.payload as { menu: menuPayload; allProducts: T_pizzas };
+			const { menu, allProducts } = payload;
+			state.initialProducts = allProducts;
+			state.menuProducts = menu.items;
+			state.totalPages = menu.meta.total_pages;
+			state.menuCategories = [
+				"All",
+				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
+			];
+		});
 		builder.addCase(fetchMenuProducts.rejected, (state) => {
+			state.initialProducts = LOCAL_DATA;
 			state.menuProducts = LOCAL_DATA;
+			state.cartProducts = [];
+			state.totalPages = LOCAL_DATA.length / 8;
+			state.menuCategories = [
+				"All",
+				...Array.from(new Set(LOCAL_DATA.flatMap((pizza) => pizza.categories))),
+			];
 		});
 		// used for the same reason as fetchMenuProducts.
 		// Until I find the correct way to implement that with RTK query
@@ -241,8 +260,6 @@ export const productsSlice = createSlice({
 });
 
 export const {
-	setMenuProducts,
-	setCartProducts,
 	setActiveCategory,
 	setActiveSort,
 	setActivePage,
