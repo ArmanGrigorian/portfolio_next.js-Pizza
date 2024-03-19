@@ -15,14 +15,14 @@ import { notFound } from "next/navigation";
 export default function Menu() {
 	const dispatch = useAppDispatch();
 	const [parent] = useAutoAnimate();
-	const { activePage, loadingState } = useAppSelector(selectProducts);
+	const menuProducts = useAppSelector(selectMenuProducts)
+	const { loadingState } = useAppSelector(selectProducts);
 
 	useEffect(() => {
-		dispatch(fetchMenuProducts(activePage));
-		dispatch(fetchMenuProducts(activePage));
+		dispatch(fetchMenuProducts());
 		dispatch(fetchCartProducts());
-	}, [activePage, dispatch]);
-	}, [activePage, dispatch]);
+	}, [dispatch]);
+
 
 	if (loadingState === "loading") {
 		return <MenuSkeleton />;

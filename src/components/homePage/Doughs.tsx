@@ -8,7 +8,7 @@ export default function Doughs(pizza: T_pizza) {
 	const { activeDough, doughs } = pizza;
 	const dispatch = useAppDispatch();
 
-	async function handleChangeDough(e: MouseEvent<HTMLButtonElement>, pizza: T_pizza) {
+
 	async function handleChangeDough(e: MouseEvent<HTMLButtonElement>, pizza: T_pizza) {
 		const target = e.target as HTMLButtonElement;
 		dispatch(fetchChangeActiveDough({ pizza, dough: target.dataset.dough || "thin" }));
@@ -22,7 +22,6 @@ export default function Doughs(pizza: T_pizza) {
 					type="button"
 					title={dough}
 					data-dough={dough}
-					onClick={(e) => handleChangeDough(e, pizza)}
 					onClick={(e) => handleChangeDough(e, pizza)}
 					className={`${
 						dough === activeDough && "bg-custom-white"

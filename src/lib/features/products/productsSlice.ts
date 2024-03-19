@@ -4,22 +4,15 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { LOCAL_DATA } from "../../../../DATA";
 import type { RootState } from "../../store";
 
-export const fetchMenuProducts = createAsyncThunk(
-	"products/fetchMenuProducts",
-	async (activePage: number) => {
-	async (activePage: number) => {
-		try {
-			const { data: menu } = await productsAPI.getMenuProducts(activePage);
-			const { data: allProducts } = await productsAPI.getAllProducts();
-			return { menu, allProducts };
-			const { data: menu } = await productsAPI.getMenuProducts(activePage);
-			const { data: allProducts } = await productsAPI.getAllProducts();
-			return { menu, allProducts };
-		} catch (err) {
-			console.error(err);
-		}
-	},
-);
+export const fetchMenuProducts = createAsyncThunk("products/fetchMenuProducts", async () => {
+	try {
+		const { data } = await productsAPI.getMenuProducts();
+
+		return data;
+	} catch (err) {
+		console.error(err);
+	}
+});
 
 export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", async () => {
 	try {
@@ -33,7 +26,7 @@ export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", 
 export const fetchClearCart = createAsyncThunk(
 	"products/fetchClearCart",
 	async (body: T_cartPizzas, { dispatch }) => {
-		const { data: menuProducts }: { data: T_pizzas } = await productsAPI.getAllProducts();
+		const { data: menuProducts }: { data: T_pizzas } = await productsAPI.getMenuProducts();
 
 		const updatedMenuProducts: T_pizzas = menuProducts.map((product) => {
 			return {
@@ -301,6 +294,10 @@ export const productsSlice = createSlice({
 	reducers: {
 		setActivePage: (state, { payload }: PayloadAction<number>) => {
 			state.activePage = payload + 1;
+			state.menuProducts = state.initialProducts.slice(
+				(state.activePage - 1) * 8,
+				(state.activePage - 1) * 8 + 8,
+			);
 		},
 		setTotalPages: (state, { payload }: PayloadAction<number>) => {
 			state.totalPages = payload;
@@ -482,18 +479,18 @@ export const productsSlice = createSlice({
 		builder.addCase(fetchMenuProducts.pending, (state) => {
 			state.loadingState = "loading";
 		});
-		builder.addCase(fetchMenuProducts.fulfilled, (state, action) => {
-			const { payload } = action;
-			const { menu, allProducts } = payload as { menu: menuProductsPayload; allProducts: T_pizzas };
-
+		builder.addCase(fetchMenuProducts.fulfilled, (state, { payload }: PayloadAction<T_pizzas>) => {
 			state.loadingState = "success";
-			state.initialProducts = allProducts;
-			state.menuProducts = menu.items;
-			state.totalPages = menu.meta.total_pages;
+			state.initialProducts = payload;
+			state.menuProducts = payload.slice(
+				(state.activePage - 1) * 8,
+				(state.activePage - 1) * 8 + 8,
+			);
+			state.totalPages = payload.length / 8;
 			state.menuCategories = [
 				"All",
-				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
-				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
+				...Array.from(new Set(payload.flatMap((pizza) => pizza.categories))),
+				...Array.from(new Set(payload.flatMap((pizza) => pizza.categories))),
 			];
 		});
 		builder.addCase(fetchMenuProducts.rejected, (state) => {

@@ -12,7 +12,6 @@ export default function Controls(pizza: T_cartPizza) {
 	}
 
 	async function handleDecrement(pizza: T_cartPizza) {
-	async function handleDecrement(pizza: T_cartPizza) {
 		if (count === 1) return;
 		dispatch(fetchManageCount({ pizza, increment: false }));
 	}
@@ -22,7 +21,6 @@ export default function Controls(pizza: T_cartPizza) {
 			<button
 				type="button"
 				title="decrement"
-				onClick={() => handleDecrement(pizza)}
 				onClick={() => handleDecrement(pizza)}
 				className={`${
 					count === 1 && "opacity-0 cursor-default"
@@ -35,7 +33,6 @@ export default function Controls(pizza: T_cartPizza) {
 			<button
 				type="button"
 				title="increment"
-				onClick={() => handleIncrement(pizza)}
 				onClick={() => handleIncrement(pizza)}
 				className="border w-10 h-10 rounded-full text-custom-grey-dark text-base font-black transition hover:bg-custom-black hover:text-custom-white active:scale-95">
 				+

@@ -1,8 +1,5 @@
 import axios from "axios";
 
-// this API is used in AsyncThunk, once I find the right way to
-// set the initial state using an RTK query this API will be removed
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const instance = axios.create({
@@ -10,13 +7,8 @@ const instance = axios.create({
 });
 
 export const productsAPI = {
-	getAllProducts: () => {
+	getMenuProducts: () => {
 		return instance.get("/menu");
-	},
-	getMenuProducts: (activePage: number) => {
-		return instance.get(
-			`/menu?&page=${activePage}&limit=8`,
-		);
 	},
 	getCartProducts: () => {
 		return instance.get("/cart");

@@ -6,7 +6,7 @@ import { useAppDispatch } from "@/lib/hook";
 export default function RemoveButton(pizza: T_cartPizza) {
 	const dispatch = useAppDispatch();
 
-	async function handleClick() {
+	async function handleClick(pizza: T_cartPizza) {
 		dispatch(fetchRemoveItemFromCart(pizza));
 	}
 

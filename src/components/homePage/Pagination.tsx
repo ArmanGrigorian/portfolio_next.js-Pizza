@@ -20,8 +20,8 @@ export default function Pagination() {
 				nextLabel={"Next 🍕"}
 				breakLabel={". 🍕 ."}
 				pageCount={totalPages}
-				marginPagesDisplayed={2}
-				pageRangeDisplayed={2}
+				marginPagesDisplayed={1}
+				pageRangeDisplayed={1}
 				onPageChange={handlePageClick}
 				containerClassName="pt-8 pb-11 flex justify-center items-center gap-5 max-sm:gap-4"
 				pageLinkClassName="w-11 h-11 flex justify-center items-center rounded-xl shadow select-none text-base text-custom-black font-semibold bg-custom-grey-light transition hover:bg-custom-black hover:text-custom-white active:scale-95 max-sm:text-sm max-sm:w-9 max-sm:h-9 max-sm:rounded-lg max-xsm:w-7 max-xsm:h-7 max-xsm:text-xs"
