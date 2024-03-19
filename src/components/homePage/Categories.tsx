@@ -25,7 +25,7 @@ export default function Categories() {
 
 	function handleMouseDown(e: MouseTouchEvent<HTMLUListElement>) {
 		if (!ulRef.current) return;
-		if (e.type === "touchstart") e.preventDefault();
+		if (e.pageX === undefined) e.preventDefault();
 
 		e.stopPropagation();
 
@@ -37,7 +37,7 @@ export default function Categories() {
 
 	function handleMouseMove(e: MouseTouchEvent<HTMLUListElement>) {
 		if (!ulRef.current || !isMouseDown) return;
-		if (e.type === "touchstart") e.preventDefault();
+		if (e.pageX === undefined) e.preventDefault();
 
 		e.stopPropagation();
 

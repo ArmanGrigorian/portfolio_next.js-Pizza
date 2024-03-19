@@ -17,7 +17,7 @@ export function updateCountsAndTotalPrice(
 }
 
 export function getEventPageX(e: MouseTouchEvent<HTMLUListElement>) {
-	if (e.type === "touchstart") {
+	if (e.pageX === undefined) {
 		return (e as TouchEvent).touches[0].pageX;
 	} else {
 		return (e as MouseEvent).pageX;
