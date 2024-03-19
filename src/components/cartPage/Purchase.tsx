@@ -2,7 +2,7 @@ import { TotalsDiv } from ".";
 
 export default function Purchase() {
 	return (
-		<div className="px-5 h-14 flex justify-between items-center gap-5 max-sm:px-3">
+		<div className="px-5 h-16 flex justify-between items-center gap-5 max-sm:px-3">
 			<TotalsDiv />
 
 			<button

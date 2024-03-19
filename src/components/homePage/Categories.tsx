@@ -74,7 +74,7 @@ export default function Categories() {
 			onTouchEnd={() => dispatch(setIsMouseDown(false))}
 			onTouchCancel={() => dispatch(setIsMouseDown(false))}
 			onTouchMove={handleMouseMove}
-			className="categoriesMask cursor-grab px-10 h-14 whitespace-nowrap overflow-hidden flex items-center gap-10 active:cursor-grabbing max-sm:px-5 max-sm:gap-4">
+			className="categoriesMask cursor-grab px-10 h-16 whitespace-nowrap overflow-hidden flex items-center gap-10 active:cursor-grabbing max-sm:px-5 max-sm:gap-4">
 			{menuCategories.map((category, idx) => {
 				const active = activeCategory.length ? activeCategory : "all";
 				return (
@@ -86,7 +86,7 @@ export default function Categories() {
 						onMouseUp={() => handleChangeCategoryMouseUp(category)}
 						className={`${
 							active === category.toLowerCase() ? "bg-custom-yellow" : ""
-						} select-none min-w-44 h-10 rounded-xl shadow-md flex justify-center items-center capitalize font-medium text-lg bg-custom-grey-light text-custom-black transition cursor-pointer hover:bg-custom-black hover:text-custom-white active:scale-95 active:cursor-grabbing max-sm:text-base`}>
+						} select-none min-w-44 h-11 rounded-xl shadow-md flex justify-center items-center capitalize font-medium text-lg bg-custom-grey-light text-custom-black transition cursor-pointer hover:bg-custom-black hover:text-custom-white active:scale-95 active:cursor-grabbing max-sm:text-base`}>
 						{category}
 					</li>
 				);
