@@ -29,8 +29,6 @@ export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", 
 export const fetchClearCart = createAsyncThunk(
 	"products/fetchClearCart",
 	async (body: T_cartPizzas, { dispatch }) => {
-		dispatch(clearCartOptimistic());
-
 		const { data: menuProducts }: { data: T_pizzas } = await productsAPI.getAllProducts();
 
 		const updatedMenuProducts: T_pizzas = menuProducts.map((product) => {
@@ -40,6 +38,8 @@ export const fetchClearCart = createAsyncThunk(
 				totalPrice: 0,
 			};
 		});
+
+		dispatch(clearCartOptimistic());
 
 		try {
 			await productsAPI.patchCart(body);
@@ -102,7 +102,6 @@ export const fetchManageCount = createAsyncThunk(
 export const fetchRemoveItemFromCart = createAsyncThunk(
 	"products/fetchRemoveItemFromCart",
 	async (pizza: T_cartPizza, { dispatch, getState }) => {
-		dispatch(removeItemFromCartOptimistic(pizza));
 		const { products } = getState() as RootState;
 		const { cart_id, origin_id, count, activePrice, price } = pizza;
 
@@ -123,6 +122,8 @@ export const fetchRemoveItemFromCart = createAsyncThunk(
 			}
 			return aggr;
 		}, {} as T_pizza);
+
+		dispatch(removeItemFromCartOptimistic(pizza));
 
 		try {
 			await productsAPI.patchCart(updatedCartProducts);
@@ -218,7 +219,6 @@ export const fetchChangeActiveDough = createAsyncThunk(
 		},
 		{ dispatch, getState },
 	) => {
-		dispatch(changeActiveDoughOptimistic({ pizza, dough }));
 		const { products } = getState() as RootState;
 		const { origin_id } = pizza;
 
@@ -231,6 +231,8 @@ export const fetchChangeActiveDough = createAsyncThunk(
 			}
 			return aggr;
 		}, {} as T_pizza);
+
+		dispatch(changeActiveDoughOptimistic({ pizza, dough }));
 
 		try {
 			await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
@@ -252,7 +254,6 @@ export const fetchChangeActivePrice = createAsyncThunk(
 		},
 		{ dispatch, getState },
 	) => {
-		dispatch(changeActivePriceOptimistic({ pizza, idx }));
 		const { products } = getState() as RootState;
 		const { origin_id } = pizza;
 
@@ -265,6 +266,8 @@ export const fetchChangeActivePrice = createAsyncThunk(
 			}
 			return aggr;
 		}, {} as T_pizza);
+
+		dispatch(changeActivePriceOptimistic({ pizza, idx }));
 
 		try {
 			await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
