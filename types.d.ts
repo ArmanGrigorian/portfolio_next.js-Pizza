@@ -87,6 +87,7 @@ type setProductsPayload = {
 };
 
 interface productsState {
+	initialProducts: T_pizzas;
 	menuProducts: T_pizzas;
 	cartProducts: T_cartPizzas;
 	activeCategory: string;
@@ -109,18 +110,12 @@ type getActualIdParams = {
 	activeSize?: string;
 };
 
-type getMenuProductsParams = {
-	activePage: number;
-	activeCategory: string;
-	activeSort: string;
-};
-
 type RootLayoutProps = {
 	children: React.ReactNode;
 	modal: React.ReactNode;
 };
 
-type fetchMenuProductsPayload = {
+type menuProductsPayload = {
 	items: T_pizzas;
 	meta: {
 		current_page: number;

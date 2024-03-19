@@ -16,12 +16,12 @@ export default function Menu() {
 	const dispatch = useAppDispatch();
 	const menuProducts = useAppSelector(selectMenuProducts);
 	const [parent] = useAutoAnimate();
-	const { activeCategory, activeSort, activePage, loadingState } = useAppSelector(selectProducts);
+	const { activePage, loadingState } = useAppSelector(selectProducts);
 
 	useEffect(() => {
-		dispatch(fetchMenuProducts({ activeCategory, activeSort, activePage }));
+		dispatch(fetchMenuProducts(activePage));
 		dispatch(fetchCartProducts());
-	}, [activeCategory, activePage, activeSort, dispatch]);
+	}, [activePage, dispatch]);
 
 	if (loadingState === "loading") {
 		return <MenuSkeleton />;
