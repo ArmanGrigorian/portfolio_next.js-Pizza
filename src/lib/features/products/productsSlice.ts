@@ -11,6 +11,7 @@ export const fetchMenuProducts = createAsyncThunk("products/fetchMenuProducts", 
 		return data;
 	} catch (err) {
 		console.error(err);
+		return LOCAL_DATA
 	}
 });
 
@@ -283,7 +284,7 @@ const initialState: productsState = {
 	activePage: 1,
 	totalPages: 2,
 	menuCategories: [],
-	loadingState: "loading",
+	loadingState: "success",
 };
 
 export const productsSlice = createSlice({

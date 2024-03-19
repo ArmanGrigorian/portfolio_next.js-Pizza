@@ -8,21 +8,23 @@ import {
 } from "@/lib/features/products/productsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hook";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { notFound } from "next/navigation";
 import { useEffect } from "react";
 import { MenuCard, MenuSkeleton, Pagination } from ".";
-import { notFound } from "next/navigation";
+
 
 export default function Menu() {
 	const dispatch = useAppDispatch();
 	const [parent] = useAutoAnimate();
-	const menuProducts = useAppSelector(selectMenuProducts)
+	const menuProducts = useAppSelector(selectMenuProducts);
 	const { loadingState } = useAppSelector(selectProducts);
 
 	useEffect(() => {
-		dispatch(fetchMenuProducts());
-		dispatch(fetchCartProducts());
+		if (window !== undefined) {
+			dispatch(fetchMenuProducts()).unwrap();
+			dispatch(fetchCartProducts()).unwrap();
+		}
 	}, [dispatch]);
-
 
 	if (loadingState === "loading") {
 		return <MenuSkeleton />;
