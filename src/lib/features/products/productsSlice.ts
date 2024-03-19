@@ -7,7 +7,11 @@ import type { RootState } from "../../store";
 export const fetchMenuProducts = createAsyncThunk(
 	"products/fetchMenuProducts",
 	async (activePage: number) => {
+	async (activePage: number) => {
 		try {
+			const { data: menu } = await productsAPI.getMenuProducts(activePage);
+			const { data: allProducts } = await productsAPI.getAllProducts();
+			return { menu, allProducts };
 			const { data: menu } = await productsAPI.getMenuProducts(activePage);
 			const { data: allProducts } = await productsAPI.getAllProducts();
 			return { menu, allProducts };
@@ -310,6 +314,13 @@ export const productsSlice = createSlice({
 					product.categories.includes(payload),
 				);
 			}
+			if (!payload.length) {
+				state.menuProducts = state.initialProducts.slice((state.activePage - 1) * 8);
+			} else {
+				state.menuProducts = state.initialProducts.filter((product) =>
+					product.categories.includes(payload),
+				);
+			}
 		},
 		setActiveSort: (state, { payload }: PayloadAction<string>) => {
 			state.activeSort = payload;
@@ -481,6 +492,7 @@ export const productsSlice = createSlice({
 			state.totalPages = menu.meta.total_pages;
 			state.menuCategories = [
 				"All",
+				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
 				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
 			];
 		});

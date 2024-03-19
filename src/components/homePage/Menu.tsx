@@ -14,13 +14,14 @@ import { notFound } from "next/navigation";
 
 export default function Menu() {
 	const dispatch = useAppDispatch();
-	const menuProducts = useAppSelector(selectMenuProducts);
 	const [parent] = useAutoAnimate();
 	const { activePage, loadingState } = useAppSelector(selectProducts);
 
 	useEffect(() => {
 		dispatch(fetchMenuProducts(activePage));
+		dispatch(fetchMenuProducts(activePage));
 		dispatch(fetchCartProducts());
+	}, [activePage, dispatch]);
 	}, [activePage, dispatch]);
 
 	if (loadingState === "loading") {

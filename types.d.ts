@@ -88,6 +88,7 @@ type setProductsPayload = {
 
 interface productsState {
 	initialProducts: T_pizzas;
+	initialProducts: T_pizzas;
 	menuProducts: T_pizzas;
 	cartProducts: T_cartPizzas;
 	activeCategory: string;
