@@ -7,7 +7,11 @@ import type { RootState } from "../../store";
 export const fetchMenuProducts = createAsyncThunk(
 	"products/fetchMenuProducts",
 	async (activePage: number) => {
+	async (activePage: number) => {
 		try {
+			const { data: menu } = await productsAPI.getMenuProducts(activePage);
+			const { data: allProducts } = await productsAPI.getAllProducts();
+			return { menu, allProducts };
 			const { data: menu } = await productsAPI.getMenuProducts(activePage);
 			const { data: allProducts } = await productsAPI.getAllProducts();
 			return { menu, allProducts };
@@ -26,8 +30,259 @@ export const fetchCartProducts = createAsyncThunk("products/fetchCartProducts", 
 	}
 });
 
+export const fetchClearCart = createAsyncThunk(
+	"products/fetchClearCart",
+	async (body: T_cartPizzas, { dispatch }) => {
+		const { data: menuProducts }: { data: T_pizzas } = await productsAPI.getAllProducts();
+
+		const updatedMenuProducts: T_pizzas = menuProducts.map((product) => {
+			return {
+				...product,
+				counts: product.counts.map((val) => (val = 0)),
+				totalPrice: 0,
+			};
+		});
+
+		dispatch(clearCartOptimistic());
+
+		try {
+			await productsAPI.patchCart(body);
+			await productsAPI.patchMenu(updatedMenuProducts);
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
+
+export const fetchManageCount = createAsyncThunk(
+	"products/fetchManageCount",
+	async (
+		{
+			pizza,
+			increment: increment,
+		}: {
+			pizza: T_cartPizza;
+			increment: boolean;
+		},
+		{ dispatch, getState },
+	) => {
+		const { products } = getState() as RootState;
+		const { cart_id, count, price, origin_id, activePrice } = pizza;
+		const basePrice = Number((price / count).toFixed(2));
+
+		const updatedCartProduct = products.cartProducts.reduce((aggr, product) => {
+			if (product.cart_id === cart_id) {
+				return {
+					...product,
+					count: increment ? count + 1 : count - 1,
+					price: increment
+						? Number((price + basePrice).toFixed(2))
+						: Number((price - basePrice).toFixed(2)),
+				};
+			}
+			return aggr;
+		}, {} as T_cartPizza);
+
+		const updatedMenuProduct = products.menuProducts.reduce((aggr, product) => {
+			if (product.origin_id === origin_id) {
+				return updateCountsAndTotalPrice(product, activePrice, increment ? true : false);
+			}
+			return aggr;
+		}, {} as T_pizza);
+
+		dispatch(manageCountOptimistic({ pizza, increment }));
+
+		try {
+			const { data } = await productsAPI.getActualId({ cart_id });
+			const actual_id = data[0]?.id;
+			await productsAPI.patchCartItem(actual_id, updatedCartProduct);
+			await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
+
+export const fetchRemoveItemFromCart = createAsyncThunk(
+	"products/fetchRemoveItemFromCart",
+	async (pizza: T_cartPizza, { dispatch, getState }) => {
+		const { products } = getState() as RootState;
+		const { cart_id, origin_id, count, activePrice, price } = pizza;
+
+		const updatedCartProducts = products.cartProducts.filter(
+			(product) => product.cart_id !== cart_id,
+		);
+
+		const updatedMenuProducts = products.menuProducts.reduce((aggr, product) => {
+			if (product.origin_id === origin_id) {
+				return {
+					...product,
+					counts: product.counts.map((val, idx) => {
+						if (idx === activePrice) return val - count;
+						return val;
+					}),
+					totalPrice: Number((product.totalPrice - price).toFixed(2)),
+				};
+			}
+			return aggr;
+		}, {} as T_pizza);
+
+		dispatch(removeItemFromCartOptimistic(pizza));
+
+		try {
+			await productsAPI.patchCart(updatedCartProducts);
+			await productsAPI.patchMenuItem(origin_id, updatedMenuProducts);
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
+
+export const fetchAddToCart = createAsyncThunk(
+	"products/fetchAddToCart",
+	async (pizza: T_pizza, { dispatch, getState }) => {
+		const { products } = getState() as RootState;
+		const { id, categories, counts, doughs, prices, sizes, totalPrice, ...pizzaData } = pizza;
+		const { activePrice, title, activeDough, origin_id } = pizzaData;
+
+		const newCartProduct: T_cartPizza = {
+			...pizzaData,
+			count: counts[activePrice],
+			price: Number(prices[activePrice].toFixed(2)),
+			activeSize: sizes[activePrice],
+		};
+
+		const search = products.cartProducts.some(
+			(product) =>
+				product.title === newCartProduct.title &&
+				product.activeDough === newCartProduct.activeDough &&
+				product.activeSize === newCartProduct.activeSize,
+		);
+
+		dispatch(addToCartOptimistic(pizza));
+
+		const updatedMenuProduct = products.menuProducts.reduce((aggr, product) => {
+			if (product.origin_id === origin_id) {
+				return updateCountsAndTotalPrice(product, activePrice, true);
+			}
+			return aggr;
+		}, {} as T_pizza);
+
+		if (search) {
+			const updatedCartItem = products.cartProducts.reduce((aggr, product) => {
+				if (
+					product.title === newCartProduct.title &&
+					product.activeDough === newCartProduct.activeDough &&
+					product.activeSize === newCartProduct.activeSize
+				) {
+					return {
+						...product,
+						count: product.count + 1,
+						price: Number((product.price + newCartProduct.price).toFixed(2)),
+					};
+				}
+				return aggr;
+			}, {} as T_cartPizza);
+
+			try {
+				const { data } = await productsAPI.getActualId({
+					title,
+					activeDough,
+					activeSize: sizes[activePrice],
+				});
+				const actual_id = data[0]?.id;
+				await productsAPI.patchCartItem(actual_id, updatedCartItem);
+				await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
+			} catch (err) {
+				console.error(err);
+			}
+		} else {
+			try {
+				await productsAPI.postCartItem({
+					...newCartProduct,
+					cart_id: generateIdFromParams(newCartProduct),
+					count: 1,
+				});
+				await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
+			} catch (err) {
+				console.error(err);
+			}
+		}
+	},
+);
+
+export const fetchChangeActiveDough = createAsyncThunk(
+	"products/fetchChangeActiveDough",
+	async (
+		{
+			pizza,
+			dough,
+		}: {
+			pizza: T_pizza;
+			dough: string;
+		},
+		{ dispatch, getState },
+	) => {
+		const { products } = getState() as RootState;
+		const { origin_id } = pizza;
+
+		const updatedMenuProduct = products.menuProducts.reduce((aggr, product) => {
+			if (product.origin_id === origin_id) {
+				return {
+					...product,
+					activeDough: dough,
+				};
+			}
+			return aggr;
+		}, {} as T_pizza);
+
+		dispatch(changeActiveDoughOptimistic({ pizza, dough }));
+
+		try {
+			await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
+
+export const fetchChangeActivePrice = createAsyncThunk(
+	"products/fetchChangeActivePrice",
+	async (
+		{
+			pizza,
+			idx,
+		}: {
+			pizza: T_pizza;
+			idx: number;
+		},
+		{ dispatch, getState },
+	) => {
+		const { products } = getState() as RootState;
+		const { origin_id } = pizza;
+
+		const updatedMenuProduct = products.menuProducts.reduce((aggr, product) => {
+			if (product.origin_id === origin_id) {
+				return {
+					...product,
+					activePrice: idx,
+				};
+			}
+			return aggr;
+		}, {} as T_pizza);
+
+		dispatch(changeActivePriceOptimistic({ pizza, idx }));
+
+		try {
+			await productsAPI.patchMenuItem(origin_id, updatedMenuProduct);
+		} catch (err) {
+			console.error(err);
+		}
+	},
+);
+
 const initialState: productsState = {
-	initialProducts: [],
+	initialProducts: LOCAL_DATA,
 	menuProducts: [],
 	cartProducts: [],
 	activeCategory: "",
@@ -35,6 +290,7 @@ const initialState: productsState = {
 	activePage: 1,
 	totalPages: 2,
 	menuCategories: [],
+	loadingState: "loading",
 };
 
 export const productsSlice = createSlice({
@@ -58,6 +314,13 @@ export const productsSlice = createSlice({
 					product.categories.includes(payload),
 				);
 			}
+			if (!payload.length) {
+				state.menuProducts = state.initialProducts.slice((state.activePage - 1) * 8);
+			} else {
+				state.menuProducts = state.initialProducts.filter((product) =>
+					product.categories.includes(payload),
+				);
+			}
 		},
 		setActiveSort: (state, { payload }: PayloadAction<string>) => {
 			state.activeSort = payload;
@@ -71,7 +334,6 @@ export const productsSlice = createSlice({
 				state.menuProducts.sort((a, b) => b.prices[b.activePrice] - a.prices[a.activePrice]);
 			}
 		},
-		// optimistic change active dough while fetching updated data
 		changeActiveDoughOptimistic: (
 			state,
 			{ payload }: PayloadAction<{ pizza: T_pizza; dough: string }>,
@@ -88,7 +350,6 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		// optimistic change active price and size while fetching updated data
 		changeActivePriceOptimistic: (
 			state,
 			{ payload }: PayloadAction<{ pizza: T_pizza; idx: number }>,
@@ -105,7 +366,6 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		// optimistic add item to cart while fetching updated data
 		addToCartOptimistic: (state, { payload }: PayloadAction<T_pizza>) => {
 			const { id, categories, counts, doughs, prices, sizes, totalPrice, ...pizzaData } = payload;
 			const { origin_id, activePrice } = pizzaData;
@@ -157,7 +417,6 @@ export const productsSlice = createSlice({
 				];
 			}
 		},
-		// optimistic manage increment and decrement actions while fetching updated data
 		manageCountOptimistic: (
 			state,
 			{ payload }: PayloadAction<{ pizza: T_cartPizza; increment: boolean }>,
@@ -186,7 +445,6 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		// optimistic remove item from cart while fetching updated data
 		removeItemFromCartOptimistic: (state, { payload }: PayloadAction<T_cartPizza>) => {
 			const { origin_id, count, cart_id, activePrice, price } = payload;
 
@@ -208,7 +466,6 @@ export const productsSlice = createSlice({
 				return product;
 			});
 		},
-		// optimistic clear cart while fetching updated data
 		clearCartOptimistic: (state) => {
 			state.cartProducts = [];
 
@@ -222,31 +479,33 @@ export const productsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		// menu products fetch, mainly used for initial rendering
-		// until I find the correct way to implement that with RTK query
+		builder.addCase(fetchMenuProducts.pending, (state) => {
+			state.loadingState = "loading";
+		});
 		builder.addCase(fetchMenuProducts.fulfilled, (state, action) => {
-			const payload = action.payload as { menu: menuPayload; allProducts: T_pizzas };
-			const { menu, allProducts } = payload;
+			const { payload } = action;
+			const { menu, allProducts } = payload as { menu: menuProductsPayload; allProducts: T_pizzas };
+
+			state.loadingState = "success";
 			state.initialProducts = allProducts;
 			state.menuProducts = menu.items;
 			state.totalPages = menu.meta.total_pages;
 			state.menuCategories = [
 				"All",
 				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
+				...Array.from(new Set(allProducts.flatMap((pizza) => pizza.categories))),
 			];
 		});
 		builder.addCase(fetchMenuProducts.rejected, (state) => {
+			state.loadingState = "error";
 			state.initialProducts = LOCAL_DATA;
 			state.menuProducts = LOCAL_DATA;
-			state.cartProducts = [];
 			state.totalPages = LOCAL_DATA.length / 8;
 			state.menuCategories = [
 				"All",
 				...Array.from(new Set(LOCAL_DATA.flatMap((pizza) => pizza.categories))),
 			];
 		});
-		// used for the same reason as fetchMenuProducts.
-		// Until I find the correct way to implement that with RTK query
 		builder.addCase(
 			fetchCartProducts.fulfilled,
 			(state, { payload }: PayloadAction<T_cartPizzas>) => {

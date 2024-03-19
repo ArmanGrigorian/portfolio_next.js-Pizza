@@ -88,6 +88,7 @@ type setProductsPayload = {
 
 interface productsState {
 	initialProducts: T_pizzas;
+	initialProducts: T_pizzas;
 	menuProducts: T_pizzas;
 	cartProducts: T_cartPizzas;
 	activeCategory: string;
@@ -95,6 +96,7 @@ interface productsState {
 	activePage: number;
 	totalPages: number;
 	menuCategories: string[];
+	loadingState: "loading" | "success" | "error";
 }
 
 type T_total = {
@@ -114,7 +116,7 @@ type RootLayoutProps = {
 	modal: React.ReactNode;
 };
 
-type menuPayload = {
+type menuProductsPayload = {
 	items: T_pizzas;
 	meta: {
 		current_page: number;

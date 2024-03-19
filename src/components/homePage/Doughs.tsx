@@ -1,18 +1,17 @@
 "use client";
 
-import { selectProducts } from "@/lib/features/products/productsSlice";
-import { useAppSelector } from "@/lib/hook";
-import { useChangeActiveDoughMutation } from "@/lib/services/productsApi";
+import { fetchChangeActiveDough } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 import { MouseEvent } from "react";
 
 export default function Doughs(pizza: T_pizza) {
 	const { activeDough, doughs } = pizza;
-	const productsState = useAppSelector(selectProducts);
-	const [changeActiveDough] = useChangeActiveDoughMutation();
+	const dispatch = useAppDispatch();
 
 	async function handleChangeDough(e: MouseEvent<HTMLButtonElement>, pizza: T_pizza) {
+	async function handleChangeDough(e: MouseEvent<HTMLButtonElement>, pizza: T_pizza) {
 		const target = e.target as HTMLButtonElement;
-		await changeActiveDough({ productsState, pizza, dough: target.dataset.dough || "thin" });
+		dispatch(fetchChangeActiveDough({ pizza, dough: target.dataset.dough || "thin" }));
 	}
 
 	return (
@@ -23,6 +22,7 @@ export default function Doughs(pizza: T_pizza) {
 					type="button"
 					title={dough}
 					data-dough={dough}
+					onClick={(e) => handleChangeDough(e, pizza)}
 					onClick={(e) => handleChangeDough(e, pizza)}
 					className={`${
 						dough === activeDough && "bg-custom-white"

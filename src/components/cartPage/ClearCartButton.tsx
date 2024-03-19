@@ -1,18 +1,15 @@
 "use client";
 
-import { productsAPI } from "@/api/api";
-import { useClearCartMutation, useResetCountsMutation } from "@/lib/services/productsApi";
+import { fetchClearCart } from "@/lib/features/products/productsSlice";
+import { useAppDispatch } from "@/lib/hook";
 import Image from "next/image";
 import trashPic from "../../../public/icons/trash.png";
 
 export default function ClearCartButton() {
-	const [clearCart] = useClearCartMutation();
-	const [resetCounts] = useResetCountsMutation();
+	const dispatch = useAppDispatch();
 
 	async function handleClick() {
-		await clearCart("");
-		const { data } = await productsAPI.getAllProducts();
-		await resetCounts(data);
+		dispatch(fetchClearCart([]));
 	}
 
 	return (
