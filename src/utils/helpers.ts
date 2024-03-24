@@ -25,7 +25,9 @@ export function getEventPageX(e: MouseTouchEvent<HTMLUListElement>) {
 }
 
 export function getTotals(cartProducts: T_cartPizzas): T_total {
-	if (cartProducts.length === 0 || !cartProducts) return { count: 0, price: 0 };
+	if (cartProducts.length === 0 || !cartProducts || Array.isArray(cartProducts) === false) {
+		return { count: 0, price: 0 };
+	}
 
 	return cartProducts.reduce(
 		(totals, product) => {

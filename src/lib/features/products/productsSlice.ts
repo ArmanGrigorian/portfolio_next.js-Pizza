@@ -11,7 +11,7 @@ export const fetchMenuProducts = createAsyncThunk("products/fetchMenuProducts", 
 		return data;
 	} catch (err) {
 		console.error(err);
-		return LOCAL_DATA
+		return LOCAL_DATA;
 	}
 });
 
@@ -305,15 +305,11 @@ export const productsSlice = createSlice({
 		},
 		setActiveCategory: (state, { payload }: PayloadAction<string>) => {
 			state.activeCategory = payload;
-			if (!payload.length) {
-				state.menuProducts = state.initialProducts.slice((state.activePage - 1) * 8);
-			} else {
-				state.menuProducts = state.initialProducts.filter((product) =>
-					product.categories.includes(payload),
+			if (!payload.length || payload.toLowerCase() === "all") {
+				state.menuProducts = state.initialProducts.slice(
+					(state.activePage - 1) * 8,
+					(state.activePage - 1) * 8 + 8,
 				);
-			}
-			if (!payload.length) {
-				state.menuProducts = state.initialProducts.slice((state.activePage - 1) * 8);
 			} else {
 				state.menuProducts = state.initialProducts.filter((product) =>
 					product.categories.includes(payload),
